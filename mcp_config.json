@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "aris-mcp"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "<YOUR_FASTMCP_LOG_LEVEL>",
+        "NO_COLOR": "<YOUR_NO_COLOR>",
+        "TERM": "<YOUR_TERM>",
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "MCP_URL": "<YOUR_MCP_URL>",
+        "ARIS_API_BASE": "<YOUR_ARIS_API_BASE>",
+        "ARIS_SSL_VERIFY": "<YOUR_ARIS_SSL_VERIFY>",
+        "ARIS_OAUTH_URL": "<YOUR_ARIS_OAUTH_URL>",
+        "ARIS_CLIENT_ID": "<YOUR_ARIS_CLIENT_ID>",
+        "ARIS_CLIENT_SECRET": "<YOUR_ARIS_CLIENT_SECRET>",
+        "ARIS_TENANT": "<YOUR_ARIS_TENANT>",
+        "ARIS_TOKEN": "<YOUR_ARIS_TOKEN>",
+        "ARIS_USERNAME": "<YOUR_ARIS_USERNAME>",
+        "ARIS_PASSWORD": "<YOUR_ARIS_PASSWORD>",
+        "ARIS_PATHS_JSON": "<YOUR_ARIS_PATHS_JSON>",
+        "ARIS_ENABLE_WRITE": "False",
+        "ARISTOOL": "True"
+      }
+    }
+  }
+}
