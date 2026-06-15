@@ -56,9 +56,7 @@ class ArisApi(ApiClientBase):
 
     def get_model(self, model_id: str) -> Any:
         """Get a single model's metadata (including its attributes)."""
-        return self.request(
-            "GET", self.paths["model"].format(model_id=model_id)
-        )
+        return self.request("GET", self.paths["model"].format(model_id=model_id))
 
     def list_model_objects(self, model_id: str) -> Any:
         """List the EPC objects (functions/events/rule operators) of a model."""
@@ -79,9 +77,7 @@ class ArisApi(ApiClientBase):
         )
 
     # ── writes (outbound enrichment; gated by ARIS_ENABLE_WRITE at the tool) ─
-    def set_model_attributes(
-        self, model_id: str, attributes: dict[str, Any]
-    ) -> Any:
+    def set_model_attributes(self, model_id: str, attributes: dict[str, Any]) -> Any:
         """Write/update attributes on a model (e.g. the ``kg_intelligence`` blob)."""
         return self.request(
             "PUT",
@@ -90,9 +86,7 @@ class ArisApi(ApiClientBase):
             content_type="application/json",
         )
 
-    def set_object_attributes(
-        self, object_id: str, attributes: dict[str, Any]
-    ) -> Any:
+    def set_object_attributes(self, object_id: str, attributes: dict[str, Any]) -> Any:
         """Write/update attributes on a single object."""
         return self.request(
             "PUT",
