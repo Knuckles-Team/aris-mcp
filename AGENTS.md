@@ -30,3 +30,15 @@
 ## Quality Bar
 Run `pre-commit run --all-files` and drive it fully green before committing. Do
 not silence checks to force green. Never commit secrets.
+
+<!-- BEGIN concept-coordination (generated) -->
+## Concept-ID Coordination (multi-session)
+
+Working in parallel with other sessions/worktrees? **Reserve a concept id before you write its `CONCEPT:` marker** so two sessions never collide:
+
+```bash
+agent-utilities --json concept reserve --ns KG-2   # or a package prefix, e.g. KEY
+```
+
+Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-utilities/concept_coordination/>
+<!-- END concept-coordination (generated) -->
