@@ -15,14 +15,21 @@ agent-utilities Knowledge Graph's Camunda + ARIS ↔ KG integration:
   uses `set_model_attributes` to write a `kg_intelligence` attribute back onto
   ARIS models (gated by `ARIS_ENABLE_WRITE`).
 
-## Tools
+## Available MCP Tools
 
-| Tool | Actions |
-|------|---------|
-| `aris_model` | `list`, `get`, `objects`, `connections`, `attributes`, `set_attributes`¹ |
-| `aris_object` | `set_attributes`¹ |
+The table below is auto-generated from the live server — do not edit by hand.
 
-¹ writes require `ARIS_ENABLE_WRITE=True`.
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `aris_model` | `MODELTOOL` | Work with ARIS models and their EPC structure. |
+| `aris_object` | `OBJECTTOOL` | Write attributes on a single ARIS object. |
+
+_2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
+
+> Writes require `ARIS_ENABLE_WRITE=True`.
 
 ## Configuration
 
