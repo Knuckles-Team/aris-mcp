@@ -1,9 +1,8 @@
 """Identity credentials loader for the ARIS client facade."""
 
-import os
-
 import requests
 from agent_utilities.base_utilities import get_logger, to_boolean
+from agent_utilities.core.config import setting
 
 from aris_mcp.api.api_client_aris import ArisApi
 
@@ -17,13 +16,13 @@ def _fetch_oauth_token() -> str | None:
     scoped to a tenant. Set ``ARIS_OAUTH_URL`` + ``ARIS_CLIENT_ID`` +
     ``ARIS_CLIENT_SECRET`` (and optionally ``ARIS_TENANT``) to use it.
     """
-    oauth_url = os.getenv("ARIS_OAUTH_URL")
-    client_id = os.getenv("ARIS_CLIENT_ID")
-    client_secret = os.getenv("ARIS_CLIENT_SECRET")
+    oauth_url = setting("ARIS_OAUTH_URL")
+    client_id = setting("ARIS_CLIENT_ID")
+    client_secret = setting("ARIS_CLIENT_SECRET")
     if not (oauth_url and client_id and client_secret):
         return None
     data = {"grant_type": "client_credentials"}
-    tenant = os.getenv("ARIS_TENANT")
+    tenant = setting("ARIS_TENANT")
     if tenant:
         data["tenant"] = tenant
     try:
@@ -32,7 +31,7 @@ def _fetch_oauth_token() -> str | None:
             data=data,
             auth=(client_id, client_secret),
             timeout=30,
-            verify=to_boolean(os.getenv("ARIS_SSL_VERIFY", "True")),
+            verify=to_boolean(setting("ARIS_SSL_VERIFY", True)),
         )
         resp.raise_for_status()
         return resp.json().get("access_token")
@@ -63,15 +62,15 @@ def get_client() -> ArisApi:
     """
     import json
 
-    base_url = os.getenv("ARIS_API_BASE", "http://localhost/abs/api")
-    verify = to_boolean(os.getenv("ARIS_SSL_VERIFY", "True"))
+    base_url = setting("ARIS_API_BASE", "http://localhost/abs/api")
+    verify = to_boolean(setting("ARIS_SSL_VERIFY", True))
 
-    token = _fetch_oauth_token() or (os.getenv("ARIS_TOKEN") or None)
-    username = os.getenv("ARIS_USERNAME") or None
-    password = os.getenv("ARIS_PASSWORD") or None
+    token = _fetch_oauth_token() or (setting("ARIS_TOKEN") or None)
+    username = setting("ARIS_USERNAME") or None
+    password = setting("ARIS_PASSWORD") or None
 
     paths = None
-    raw_paths = os.getenv("ARIS_PATHS_JSON")
+    raw_paths = setting("ARIS_PATHS_JSON")
     if raw_paths:
         try:
             paths = json.loads(raw_paths)
