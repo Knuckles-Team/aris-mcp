@@ -23,8 +23,8 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
-| `aris_model` | `MODELTOOL` | Work with ARIS models and their EPC structure. |
-| `aris_object` | `OBJECTTOOL` | Write attributes on a single ARIS object. |
+| `aris_model` | `ARISTOOL` | Work with ARIS models and their EPC structure. |
+| `aris_object` | `ARISTOOL` | Write attributes on a single ARIS object. |
 
 _2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
