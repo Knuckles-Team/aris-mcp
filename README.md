@@ -33,6 +33,59 @@ _2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unle
 
 ## Environment Variables
 
+<!-- ENV-VARS-TABLE:START -->
+
+#### Package environment variables
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
+| `ARIS_SSL_VERIFY` | `True` | Verify TLS (set False for self-signed / homelab tenants) |
+| `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
+| `ARIS_CLIENT_ID` | — |  |
+| `ARIS_CLIENT_SECRET` | — |  |
+| `ARIS_TENANT` | — |  |
+| `ARIS_TOKEN` | — | 2. Static bearer token (alternative to OAuth) |
+| `ARIS_USERNAME` | — | 3. HTTP basic auth (alternative) |
+| `ARIS_PASSWORD` | — |  |
+| `ARIS_PATHS_JSON` | — | e.g. {"models":"v2/repository/models","model_objects":"v2/models/{model_id}/objects"} |
+| `ARIS_ENABLE_WRITE` | `False` | Allow (gated) attribute writes back onto ARIS models (KG writeback) |
+| `TRANSPORT` | `stdio` | stdio, streamable-http, or sse |
+| `HOST` | `0.0.0.0` |  |
+| `PORT` | `8000` |  |
+| `MCP_TOOL_MODE` | `condensed` | Tool surface: condensed, verbose, or both |
+| `MCP_ENABLED_TOOLS` | — | Comma-separated tool / tag allow/deny lists |
+| `MCP_DISABLED_TOOLS` | — |  |
+| `MCP_ENABLED_TAGS` | — |  |
+| `MCP_DISABLED_TAGS` | — |  |
+| `DEBUG` | `False` |  |
+| `PYTHONUNBUFFERED` | `1` |  |
+| `ARISTOOL` | `True` | The action-routed ARIS tools (aris_model, aris_object) share this toggle. |
+| `ENABLE_OTEL` | `True` |  |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | — |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | — |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY` | — |  |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | — |  |
+| `EUNOMIA_TYPE` | `none` |  |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
+| `EUNOMIA_REMOTE_URL` | — |  |
+
+#### Inherited agent-utilities variables (apply to every connector)
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
+| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
+| `PROVIDER` | `openai` | LLM provider for the agent |
+| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
+
+_30 package + 7 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+<!-- ENV-VARS-TABLE:END -->
+
+
 Every variable the server reads, grouped by concern.
 
 ### Connection & Credentials
