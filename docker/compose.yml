@@ -1,0 +1,20 @@
+services:
+  aris-mcp:
+    build: .
+    environment:
+      - ARIS_API_BASE
+      - ARIS_SSL_VERIFY
+      - ARIS_OAUTH_URL
+      - ARIS_CLIENT_ID
+      - ARIS_CLIENT_SECRET
+      - ARIS_TENANT
+      - ARIS_TOKEN
+      - ARIS_USERNAME
+      - ARIS_PASSWORD
+      - ARIS_PATHS_JSON
+      - ARIS_ENABLE_WRITE
+      - TRANSPORT=streamable-http
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
