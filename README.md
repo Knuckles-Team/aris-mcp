@@ -21,12 +21,31 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `aris_model` | `ARISTOOL` | Work with ARIS models and their EPC structure. |
 | `aris_object` | `ARISTOOL` | Write attributes on a single ARIS object. |
 
-_2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>7 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `aris_get_model` | `ARIS_APITOOL` | Get a single model's metadata (including its attributes). |
+| `aris_list_model_attributes` | `ARIS_APITOOL` | Get a model's attributes (used for writeback idempotency read-back). |
+| `aris_list_model_connections` | `ARIS_APITOOL` | List the directed control-flow connections between a model's objects. |
+| `aris_list_model_objects` | `ARIS_APITOOL` | List the EPC objects (functions/events/rule operators) of a model. |
+| `aris_list_models` | `ARIS_APITOOL` | List models in the tenant/database (process + architecture). |
+| `aris_set_model_attributes` | `ARIS_APITOOL` | Write/update attributes on a model (e.g. the ``kg_intelligence`` blob). |
+| `aris_set_object_attributes` | `ARIS_APITOOL` | Write/update attributes on a single object. |
+
+</details>
+
+_2 action-routed tool(s) (default) · 7 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 > Writes require `ARIS_ENABLE_WRITE=True`.
