@@ -7,6 +7,6 @@ and a future second ARIS surface can be added without changing callers.
 
 from aris_mcp.api.api_client_aris import ArisApi
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = ["ArisApi"]
