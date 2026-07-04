@@ -1,0 +1,131 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Software AG ARIS process / enterprise-architecture ontology — EPC (Event-driven
+# Process Chain) models and their objects, control-flow connections, and raw model
+# exports. All classes and properties live in the shared `:` (kg#) namespace; only the
+# owl:Ontology node gets the per-package IRI. Reuses shared :Document / :MediaAsset /
+# :Blob / :Person — never redefined here. Backs the aris-mcp tool surface
+# (aris_model / aris_object / aris_ingest_models / aris_ingest_model_export).
+
+# --- classes (owl:Class) ---
+
+:ProcessModel a owl:Class ;
+    rdfs:label "Process Model" ;
+    rdfs:comment "An ARIS model — an EPC / value-added chain / architecture diagram identified by GUID (aris_model list/get)." .
+
+:EPCObject a owl:Class ;
+    rdfs:label "EPC Object" ;
+    rdfs:comment "Abstract superclass of the objects placed on an ARIS model (aris_model objects)." .
+
+:EPCFunction a owl:Class ;
+    rdfs:subClassOf :EPCObject ;
+    rdfs:label "EPC Function" ;
+    rdfs:comment "An activity/task in an EPC — a unit of work that transforms an input event into an output event." .
+
+:EPCEvent a owl:Class ;
+    rdfs:subClassOf :EPCObject ;
+    rdfs:label "EPC Event" ;
+    rdfs:comment "A state/trigger in an EPC that precedes or results from a function (a business condition being true)." .
+
+:EPCRule a owl:Class ;
+    rdfs:subClassOf :EPCObject ;
+    rdfs:label "EPC Rule" ;
+    rdfs:comment "A logical connector/rule operator (AND / OR / XOR) that splits or joins control flow in an EPC." .
+
+:ProcessConnection a owl:Class ;
+    rdfs:label "Process Connection" ;
+    rdfs:comment "A directed control-flow arc between two EPC objects of a model (aris_model connections)." .
+
+:ModelExport a owl:Class ;
+    rdfs:subClassOf :MediaAsset ;
+    rdfs:label "Model Export" ;
+    rdfs:comment "A raw exported rendering of an ARIS model (BPMN/XML/AML/SVG/PDF bytes) stored as a content-addressed :Blob + :MediaAsset." .
+
+# --- links (owl:ObjectProperty) ---
+
+:hasObject a owl:ObjectProperty ;
+    rdfs:label "has object" ;
+    rdfs:comment "Links a ProcessModel to an EPCObject (function/event/rule) it contains." ;
+    rdfs:domain :ProcessModel ;
+    rdfs:range :EPCObject .
+
+:hasConnection a owl:ObjectProperty ;
+    rdfs:label "has connection" ;
+    rdfs:comment "Links a ProcessModel to a ProcessConnection defined within it." ;
+    rdfs:domain :ProcessModel ;
+    rdfs:range :ProcessConnection .
+
+:flowsTo a owl:ObjectProperty ;
+    rdfs:label "flows to" ;
+    rdfs:comment "Directed control-flow edge from a source EPCObject to a target EPCObject." ;
+    rdfs:domain :EPCObject ;
+    rdfs:range :EPCObject .
+
+:connectionSource a owl:ObjectProperty ;
+    rdfs:label "connection source" ;
+    rdfs:comment "Links a ProcessConnection to the EPCObject it originates from." ;
+    rdfs:domain :ProcessConnection ;
+    rdfs:range :EPCObject .
+
+:connectionTarget a owl:ObjectProperty ;
+    rdfs:label "connection target" ;
+    rdfs:comment "Links a ProcessConnection to the EPCObject it points to." ;
+    rdfs:domain :ProcessConnection ;
+    rdfs:range :EPCObject .
+
+:exportedFrom a owl:ObjectProperty ;
+    rdfs:label "exported from" ;
+    rdfs:comment "Links a ModelExport blob to the ProcessModel it was rendered from." ;
+    rdfs:domain :ModelExport ;
+    rdfs:range :ProcessModel .
+
+:ownedBy a owl:ObjectProperty ;
+    rdfs:label "owned by" ;
+    rdfs:comment "Links a ProcessModel to the Person accountable for it (process owner)." ;
+    rdfs:domain :ProcessModel ;
+    rdfs:range :Person .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:guid a owl:DatatypeProperty ;
+    rdfs:label "guid" ;
+    rdfs:comment "ARIS global object/model identifier (the tenant-stable GUID)." ;
+    rdfs:range xsd:string .
+
+:modelType a owl:DatatypeProperty ;
+    rdfs:label "model type" ;
+    rdfs:comment "ARIS model type (e.g. EPC, VACD, Organizational chart, BPMN)." ;
+    rdfs:domain :ProcessModel ;
+    rdfs:range xsd:string .
+
+:objectType a owl:DatatypeProperty ;
+    rdfs:label "object type" ;
+    rdfs:comment "ARIS object/symbol type of an EPCObject (function, event, rule operator symbol)." ;
+    rdfs:domain :EPCObject ;
+    rdfs:range xsd:string .
+
+:groupPath a owl:DatatypeProperty ;
+    rdfs:label "group path" ;
+    rdfs:comment "Repository group/database path a ProcessModel is filed under." ;
+    rdfs:domain :ProcessModel ;
+    rdfs:range xsd:string .
+
+:connectionType a owl:DatatypeProperty ;
+    rdfs:label "connection type" ;
+    rdfs:comment "ARIS connection/edge type of a ProcessConnection (e.g. activates, is predecessor of)." ;
+    rdfs:domain :ProcessConnection ;
+    rdfs:range xsd:string .
+
+<http://knuckles.team/kg/aris> a owl:Ontology ;
+    rdfs:label "ARIS Process Ontology" ;
+    rdfs:comment """Software AG ARIS process and enterprise-architecture model —
+    process models (EPC/VACD/architecture), their EPC objects (functions, events, rule
+    operators), directed control-flow connections, and raw model exports (blobs) —
+    federated into the agent-utilities knowledge-graph hub.""" ;
+    owl:imports <http://knuckles.team/kg/enterprise> .
