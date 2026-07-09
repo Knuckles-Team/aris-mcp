@@ -1,5 +1,6 @@
 ---
 name: aris-kg-ingestion
+skill_type: skill
 description: >-
   Natively ingest Software AG ARIS process models into the epistemic-graph
   knowledge graph over the aris-mcp MCP server — push models as typed

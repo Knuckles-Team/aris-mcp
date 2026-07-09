@@ -1,5 +1,6 @@
 ---
 name: aris-process-modeling
+skill_type: skill
 description: >-
   Read Software AG ARIS process models over the aris-mcp MCP server — list the
   model inventory, fetch one model's metadata/attributes, and read its EPC

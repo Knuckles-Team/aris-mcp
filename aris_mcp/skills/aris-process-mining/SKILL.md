@@ -1,5 +1,6 @@
 ---
 name: aris-process-mining
+skill_type: skill
 description: >-
   Analyze the control flow of Software AG ARIS EPC models over the aris-mcp MCP
   server — trace event→function→event paths, find splits/joins at rule
