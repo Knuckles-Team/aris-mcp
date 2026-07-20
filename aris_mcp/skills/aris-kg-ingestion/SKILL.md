@@ -22,7 +22,7 @@ The native "maximum ingestion" seam for ARIS: push process models into the ONE
 epistemic-graph engine as typed OWL nodes + control-flow links, and store raw model
 exports as durable blobs. Backed by `aris_mcp/kg_ingest.py` (typed nodes) and
 `aris_mcp/kg_media.py` (blobs), federated by the `aris.ttl` ontology.
-CONCEPT:AU-KG.ingest.enterprise-source-extractor.
+CONCEPT:AU-KG.ingest.enterprise-source-extractor
 
 ## When to use
 - Mirror the ARIS model inventory into the KG as `:ProcessModel` nodes.
