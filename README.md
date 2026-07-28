@@ -21,10 +21,12 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
+| `aris_ingest_model_export` | `ARISTOOL` | Store a raw ARIS model export (bytes) as a content-addressed KG blob. |
+| `aris_ingest_models` | `ARISTOOL` | Natively ingest ARIS models into epistemic-graph as typed nodes. |
 | `aris_model` | `ARISTOOL` | Work with ARIS models and their EPC structure. |
 | `aris_object` | `ARISTOOL` | Write attributes on a single ARIS object. |
 
@@ -45,7 +47,7 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 </details>
 
-_2 action-routed tool(s) (default) · 7 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 > Writes require `ARIS_ENABLE_WRITE=True`.
@@ -62,12 +64,12 @@ _2 action-routed tool(s) (default) · 7 verbose 1:1 tool(s). Each is enabled unl
 | `ARIS_SSL_VERIFY` | `True` | Verify TLS (set False for self-signed / homelab tenants) |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
-| `ARIS_CLIENT_SECRET` | — |  |
+| `ARIS_CLIENT_SECRET` | secret-injected |  |
 | `ARIS_TENANT` | — |  |
-| `ARIS_TOKEN` | — | 2. Static bearer token (alternative to OAuth) |
+| `ARIS_TOKEN` | secret-injected | 2. Static bearer token (alternative to OAuth) |
 | `ARIS_USERNAME` | — | 3. HTTP basic auth (alternative) |
-| `ARIS_PASSWORD` | — |  |
-| `ARIS_PATHS_JSON` | — | e.g. {"models":"v2/repository/models","model_objects":"v2/models/{model_id}/objects"} |
+| `ARIS_PASSWORD` | secret-injected |  |
+| `ARIS_PATHS_JSON` | — | Optional JSON overriding the default ARIS REST path templates per tenant e.g. {"models":"v2/repository/models","model_objects":"v2/models/{model_id}/objects"} |
 | `ARIS_ENABLE_WRITE` | `False` | Allow (gated) attribute writes back onto ARIS models (KG writeback) |
 | `TRANSPORT` | `stdio` | stdio, streamable-http, or sse |
 | `HOST` | `0.0.0.0` |  |
@@ -82,8 +84,6 @@ _2 action-routed tool(s) (default) · 7 verbose 1:1 tool(s). Each is enabled unl
 | `ARISTOOL` | `True` | The action-routed ARIS tools (aris_model, aris_object) share this toggle. |
 | `ENABLE_OTEL` | `True` |  |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | — |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY` | — |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | — |  |
 | `EUNOMIA_TYPE` | `none` |  |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
@@ -93,15 +93,17 @@ _2 action-routed tool(s) (default) · 7 verbose 1:1 tool(s). Each is enabled unl
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
 | `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
 | `PROVIDER` | `openai` | LLM provider for the agent |
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_30 package + 7 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
