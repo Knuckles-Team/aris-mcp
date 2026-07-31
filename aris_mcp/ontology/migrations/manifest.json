@@ -1,0 +1,6 @@
+{
+  "connector": "aris-mcp",
+  "current_ontology_source": "aris",
+  "migrations": [],
+  "schema_version": "1"
+}
