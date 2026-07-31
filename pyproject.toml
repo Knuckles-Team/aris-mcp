@@ -63,3 +63,12 @@ ignore = [ "E402", "E501", "B008",]
 
 [tool.setuptools.packages.find]
 where = [ ".",]
+
+# Minimal residue for a2a.json generation (CONCEPT:AU-KG.ontology.a2a-card-generation,
+# D-OB-1): everything else in a2a.json is derived from this file's [project] table
+# by agent-utilities' generate_connector_manifests.py — a2a.json itself is a
+# generated artifact, never hand-edited. This agent-facing description is more
+# specific than [project].description (a packaging blurb) and has no other
+# canonical source, so it is declared here instead of being lost.
+[tool.a2a]
+description = "Software AG ARIS agent: model inventory, EPC objects/connections, attribute read and (gated) write over the ARIS REST API."
