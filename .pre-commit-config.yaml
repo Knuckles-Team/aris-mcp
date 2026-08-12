@@ -1,3 +1,6 @@
+# Phase 0 dev-velocity contract (graph-os-completion-program): a hook with no
+# explicit `stages:` below is commit-only, never both.
+default_stages: [pre-commit]
 repos:
   - repo: local
     hooks:
