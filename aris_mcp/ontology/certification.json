@@ -1,0 +1,37 @@
+{
+  "api_version": "graphos.io/v1",
+  "artifacts": {
+    "a2a.json": "386330b4ebd1c9defdeab11e0edef73c672713094b82290c8aa21a895756aba9",
+    "aris_mcp/connectors/mcp_source_presets.json": "ac1efa12c99c5be922ec5c8f9c964840faa8ab4c8d3bdb5363f3f2f14d127ff8",
+    "aris_mcp/connectors/tool_schema_fingerprints.json": "0b8fee6d26328551d889a44bdff94d967f86e125a9db0b4518a14e79db98c196",
+    "aris_mcp/ontology/aris.ttl": "a96f072e6a642a4483f1aafde796d9653f5ac9c94138469c00c80ccfccb61b03",
+    "aris_mcp/ontology/fixtures/records.json": "59978f7281434561bfd7f36ea15d547fdeab79555898896253a1715ceb805281",
+    "aris_mcp/ontology/mappings/source.yaml": "f75c436c56c892a5563bc14a5426af878e047e0ef86c97d6a1c8f21505a6fb7a",
+    "aris_mcp/ontology/migrations/manifest.json": "3dc6931665b06c90b37700bdb191ac86c79aabcc664b505e972abeb0cd2c4d0c",
+    "aris_mcp/ontology/shapes/connector.shacl.ttl": "231b01763b808e1c6f78337c2f99a0e32ac6322d2bbdd162cdbdc8aa02f09eec",
+    "connector_manifest.yml": "cd91f8eb04c3a393f0ccfcc4aeae08a0e674e7f4b7eced22b2126b48ff5f456b"
+  },
+  "checks": {
+    "declared_tool_schema": "passed",
+    "manifest_integrity": "passed",
+    "privacy_contract": "passed",
+    "shacl_parse": "passed",
+    "synthetic_fixture_contract": "passed"
+  },
+  "compatibility": {
+    "agent_utilities": ">=2.1.0,<3",
+    "bundle_schema": "2",
+    "epistemic_graph": ">=2.23.1,<3"
+  },
+  "connector": "aris-mcp",
+  "kind": "ConnectorSourceAttestation",
+  "live_certified": false,
+  "mode": "offline-source",
+  "schema_version": "2",
+  "signature": "EvxMuaPWmJzh46_Pt3TwmcnOm5T0yG67TV5Yb3rS29I3YYsMu_NSOimwHaU9P2nZDUVar5WGd0sPUXw6pRylAA",
+  "signature_algorithm": "ed25519",
+  "signer": "ontology-manifest-generator",
+  "signing_public_key": "QkigdPNpcUU7x7NcSkwCsUXIQpaFncMQbYSoiSgI2SY",
+  "status": "source-validated",
+  "validated_at": "2026-07-28T10:14:00Z"
+}

@@ -125,19 +125,19 @@ uv run aris-mcp --transport streamable-http --port 8000
 ### 4. Remote URL (deployed behind Caddy)
 
 When the server is deployed remotely (e.g. as a Docker service) and published through
-Caddy on the internal `*.arpa` zone, connect with the `"url"` key — no local process or
+Caddy at a deployment-selected hostname, connect with the `"url"` key — no local process or
 image required:
 
 ```json
 {
   "mcpServers": {
-    "aris-mcp": { "url": "http://aris-mcp.arpa/mcp" }
+    "aris-mcp": { "url": "https://aris-mcp.example.invalid/mcp" }
   }
 }
 ```
 
-Caddy reverse-proxies `http://aris-mcp.arpa` to the container's `:8000`
-streamable-http listener; `http://aris-mcp.arpa/health` returns
+Caddy reverse-proxies `https://aris-mcp.example.invalid` to the container's `:8000`
+streamable-http listener; `https://aris-mcp.example.invalid/health` returns
 `{"status":"OK"}` when the service is live.
 <!-- END GENERATED: deployment-options -->
 
@@ -187,7 +187,7 @@ curl -s http://localhost:8000/health        # {"status":"OK"}
 |---|---|---|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root) |
 | `ARIS_TOKEN` | _(empty)_ | Static bearer token (alt to OAuth / basic) |
-| `ARIS_SSL_VERIFY` | `True` | Verify TLS (set `False` for self-signed homelab) |
+| `ARIS_SSL_VERIFY` | `True` | Verify TLS (required; configure a trusted CA bundle for private PKI) |
 | `ARIS_ENABLE_WRITE` | `False` | Allow gated attribute writeback |
 
 OAuth2 client-credentials (`ARIS_OAUTH_URL` / `ARIS_CLIENT_ID` / `ARIS_CLIENT_SECRET`
@@ -273,8 +273,8 @@ services:
 Expose the HTTP server on a hostname with automatic TLS. Add to your `Caddyfile`:
 
 ```caddy
-# Internal (self-signed) — homelab .arpa zone
-aris-mcp.arpa {
+# Deployment-selected HTTPS hostname
+aris-mcp.example.invalid {
     tls internal
     reverse_proxy aris-mcp:8000
 }
@@ -313,4 +313,4 @@ Add to your client's `mcp_config.json`:
 }
 ```
 
-For a remote HTTP server, point the client at `http://aris-mcp.arpa/mcp` instead.
+For a remote HTTP server, point the client at `https://aris-mcp.example.invalid/mcp` instead.

@@ -89,6 +89,7 @@ nav:
   - Overview: overview.md
   - Installation: installation.md
   - Deployment: deployment.md
+  - Configuration, trust, and privacy: configuration.md
   - Usage (API / CLI / MCP): usage.md
   - Backing Platform (ARIS): platform.md
   - Concepts: concepts.md
