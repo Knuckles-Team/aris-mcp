@@ -61,7 +61,7 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
-| `ARIS_SSL_VERIFY` | `True` | Verify TLS (set False for self-signed / homelab tenants) |
+| `ARIS_SSL_VERIFY` | `True` | Verify TLS (required; configure a trusted CA bundle for private PKI) |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
 | `ARIS_CLIENT_SECRET` | secret-injected |  |
@@ -227,7 +227,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 1. **stdio** — `uv run aris-mcp` (see `mcp_config.json`).
 2. **streamable-http** — `aris-mcp --transport streamable-http --port 8000`.
 3. **local container** — build from `docker/` and run with the env above.
-4. **remote** — point your client at `http://aris-mcp.arpa/mcp`.
+4. **remote** — point your client at `https://aris-mcp.example.invalid/mcp`.
 
 
 <!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->
@@ -250,3 +250,19 @@ to just this package. Ask your agent to **"deploy `aris-mcp` with agent-os-genes
 Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
 
 <!-- END agent-os-genesis-deploy -->
+
+<!-- GOVERNED-CAPABILITY:START -->
+## Governed capability contract
+
+This package ships a compact canonical skill surface with specialist procedures
+kept as referenced workflows. The current MCP tools, skill metadata,
+`connector_manifest.yml`, ontology, mappings, shapes, fixtures, migrations,
+tool-schema fingerprints, and certification metadata form one versioned
+capability contract. Validate them together; do not rely on stale tool names or
+historical per-task skill wrappers.
+
+Runtime endpoints, credentials, certificate trust, tenant identity, retention,
+and observability policy are deployment inputs and are never packaged values.
+See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
+network transport, connector ingestion, GraphOS delegation, or trace export.
+<!-- GOVERNED-CAPABILITY:END -->
