@@ -16,27 +16,27 @@ repos:
       - id: mcp-readme-table
         name: sync MCP tools table in README
         entry: |-
-          bash -c 'if [ -f uv.lock ]; then uv run python -m agent_utilities.mcp.readme_tools; else python -m agent_utilities.mcp.readme_tools; fi'
+          bash -c 'if [ -f uv.lock ]; then uv run --extra mcp python -m agent_utilities.mcp.readme_tools; else python -m agent_utilities.mcp.readme_tools; fi'
         language: system
         files: ^(README\.md|.*/mcp_server\.py|.*/mcp/.*\.py)$
         pass_filenames: false
       - id: readme-env-vars
         name: sync env-vars table in README
         entry: |-
-          bash -c 'if [ -f uv.lock ]; then uv run python -m agent_utilities.mcp.readme_env_vars; else python -m agent_utilities.mcp.readme_env_vars; fi'
+          bash -c 'if [ -f uv.lock ]; then uv run --extra mcp python -m agent_utilities.mcp.readme_env_vars; else python -m agent_utilities.mcp.readme_env_vars; fi'
         language: system
         files: ^(README\.md|\.env\.example)$
         pass_filenames: false
       - id: readme-mcp-examples
         name: sync mcp_config examples in README + env blocks
         entry: |-
-          bash -c 'if [ -f uv.lock ]; then uv run python -m agent_utilities.mcp.readme_mcp_examples; else python -m agent_utilities.mcp.readme_mcp_examples; fi'
+          bash -c 'if [ -f uv.lock ]; then uv run --extra mcp python -m agent_utilities.mcp.readme_mcp_examples; else python -m agent_utilities.mcp.readme_mcp_examples; fi'
         language: system
         files: ^(README\.md|\.env\.example|mcp_config.*\.json|.*/mcp_config.*\.json|.*/mcp_server\.py)$
         pass_filenames: false
       - id: env-var-drift
         name: check env-var/config drift
-        entry: bash -c 'if [ -f uv.lock ]; then uv run python -m agent_utilities.mcp.check_env_var_drift --check; else python -m agent_utilities.mcp.check_env_var_drift --check; fi'
+        entry: bash -c 'if [ -f uv.lock ]; then uv run --extra mcp python -m agent_utilities.mcp.check_env_var_drift --check; else python -m agent_utilities.mcp.check_env_var_drift --check; fi'
         language: system
         pass_filenames: false
         files: ^(README\.md|\.env\.example|mcp_config.*\.json|.*/mcp_config.*\.json|docker/.*compose.*\.ya?ml|.*/auth\.py|.*/mcp_server\.py)$

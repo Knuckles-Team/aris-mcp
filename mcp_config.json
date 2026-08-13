@@ -7,18 +7,11 @@
         "aris-mcp"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed",
+        "MCP_TOOL_MODE": "intent",
         "ARISTOOL": "True",
         "ARIS_API_BASE": "http://localhost/abs/api",
-        "ARIS_CLIENT_ID": "",
-        "ARIS_CLIENT_SECRET": "",
         "ARIS_ENABLE_WRITE": "False",
-        "ARIS_OAUTH_URL": "",
-        "ARIS_PASSWORD": "",
-        "ARIS_PATHS_JSON": "",
-        "ARIS_TENANT": "",
-        "ARIS_TOKEN": "",
-        "ARIS_USERNAME": ""
+        "ARIS_SSL_VERIFY": "True"
       }
     }
   }
