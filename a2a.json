@@ -2,7 +2,7 @@
   "name": "aris-mcp-agent",
   "type": "agent",
   "version": "1.0.0",
-  "description": "Software AG ARIS REST API + MCP Server + A2A Server for Agentic AI!",
+  "description": "Software AG ARIS agent: model inventory, EPC objects/connections, attribute read and (gated) write over the ARIS REST API.",
   "url": "https://github.com/Knuckles-Team/aris-mcp/tree/main",
   "license": "MIT",
   "capabilities": [
