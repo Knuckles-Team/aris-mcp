@@ -3,24 +3,29 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. This package natively pushes its
 ARIS process data into the epistemic-graph knowledge graph as **typed OWL nodes**
 (:ProcessModel, :EPCFunction, :EPCEvent, :EPCRule, :ProcessConnection) + control-flow
-links, using the lightweight engine client (``GraphComputeEngine()._client`` + ``txn``)
-— the same fast client the blob ``MediaStore`` uses, NOT the heavy in-process ingestion
-engine.
+links, through the required ``agent_utilities.knowledge_graph.memory.native_ingest``
+authority — the one connector write path; there is no self-contained fallback
+transaction here.
 
-Entirely best-effort and dependency-/engine-guarded: with no agent-utilities KG stack
-or no reachable engine, every entry point **no-ops** (returns ``None``), so the
-connector keeps working with zero KG infrastructure. Nodes carry the shared provenance
-(``domain``/``source``) and match the classes federated by ``aris_mcp.ontology`` (aris.ttl).
+Entirely best-effort: with no agent-utilities KG stack, no reachable engine, or a
+malformed record, every entry point **no-ops** (returns ``None``), so the connector
+keeps working with zero KG infrastructure. Nodes carry the shared provenance
+(``domain``/``source``) and match the classes federated by ``aris_mcp.ontology``
+(aris.ttl).
 
-Only a thin mapper lives here (ARIS records → entity/document dicts); the txn write path
-is the shared primitive when installed, with a self-contained txn fallback below since the
-primitive is not yet in the installed ``agent_utilities``.
+Only a thin mapper lives here (ARIS records → entity/relationship dicts); the write
+path is the shared ``native_ingest`` primitive.
 """
 
 from __future__ import annotations
 
 import logging
 from typing import Any
+
+from agent_utilities.knowledge_graph.memory.native_ingest import (
+    NativeIngestError,
+    ingest_entities as _native_ingest_entities,
+)
 
 logger = logging.getLogger("aris_mcp.kg")
 
@@ -46,28 +51,6 @@ def _first(rec: dict[str, Any], keys: tuple[str, ...]) -> Any:
     return None
 
 
-# ── shared-primitive-or-fallback write path ────────────────────────────────
-def _client() -> tuple[Any | None, str]:
-    """Return ``(engine_client, graph_name)`` or ``(None, "")`` when unavailable."""
-    try:
-        from agent_utilities.knowledge_graph.core.graph_compute import (
-            GraphComputeEngine,
-        )
-    except Exception as e:  # noqa: BLE001 — KG stack absent
-        logger.debug("KG ingest unavailable (import): %s", e)
-        return None, ""
-    try:
-        engine = GraphComputeEngine()
-        client = getattr(engine, "_client", None)
-        if client is None:
-            return None, ""
-        graph = getattr(engine, "graph_name", None) or "__commons__"
-        return client, graph
-    except Exception as e:  # noqa: BLE001 — engine unreachable
-        logger.debug("KG ingest: engine unreachable: %s", e)
-        return None, ""
-
-
 def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,
@@ -77,23 +60,19 @@ def ingest_entities(
     client: Any | None = None,
     graph: str | None = None,
 ) -> dict[str, int] | None:
-    """Write typed nodes (+ edges) into epistemic-graph via the fast engine client.
+    """Write typed OWL nodes (+ edges) into epistemic-graph. Best-effort, never raises.
 
-    Prefers the shared ``native_ingest`` primitive; falls back to a self-contained txn
-    when it is not present in the installed ``agent_utilities``. Returns
-    ``{"nodes":n, "edges":m}`` or ``None`` (no engine / failure; never raises).
+    ``entities``: ``[{"id":..., "node_type":<owl:Class>, ...props}]``.
+    ``relationships``: ``[{"source":id, "target":id, "relationship":<link>}]``.
+    Returns ``{"nodes":n, "edges":m}`` or ``None`` (empty input / no reachable engine /
+    malformed record). ``client``/``graph`` may be injected (tests); otherwise the
+    process-owned governed authority is resolved on demand.
     """
     entities = [e for e in (entities or []) if e.get("id")]
     if not entities:
         return None
-
-    # Preferred: the shared fleet primitive (single implementation of the txn dance).
     try:
-        from agent_utilities.knowledge_graph.memory.native_ingest import (
-            ingest_entities as _shared_ingest,
-        )
-
-        return _shared_ingest(
+        return _native_ingest_entities(
             entities,
             relationships,
             source=source,
@@ -101,42 +80,9 @@ def ingest_entities(
             client=client,
             graph=graph,
         )
-    except Exception as e:  # noqa: BLE001 — primitive absent; use local fallback
-        logger.debug("native_ingest primitive unavailable, using fallback: %s", e)
-
-    if client is None:
-        client, graph = _client()
-    if client is None:
+    except NativeIngestError as exc:
+        logger.debug("KG ingest unavailable/failed: %s", exc)
         return None
-    graph = graph or "__commons__"
-
-    try:
-        txn = client.txn.begin(graph=graph)
-        for ent in entities:
-            props = {k: v for k, v in ent.items() if k != "id" and v is not None}
-            props.setdefault("source", source)
-            props.setdefault("domain", domain)
-            client.txn.add_node(txn, ent["id"], props)
-        committed = client.txn.commit(txn)
-    except Exception as e:  # noqa: BLE001 — engine/txn failure is non-fatal
-        logger.warning("KG ingest: txn failed: %s", e)
-        return None
-    if not committed:
-        logger.warning("KG ingest: txn not committed (conflict)")
-        return None
-
-    edges = 0
-    for rel in relationships or []:
-        try:
-            client.edges.add(
-                rel["source"], rel["target"], {"type": rel.get("type", "RELATED")}
-            )
-            edges += 1
-        except Exception as e:  # noqa: BLE001 — pure edge link, best-effort
-            logger.debug("KG ingest: edge skipped: %s", e)
-
-    logger.info("KG ingest: wrote %d nodes, %d edges", len(entities), edges)
-    return {"nodes": len(entities), "edges": edges}
 
 
 # ── ARIS-specific mappers ──────────────────────────────────────────────────
@@ -165,7 +111,7 @@ def ingest_models(
         entities.append(
             {
                 "id": f"aris:model:{mid}",
-                "type": "ProcessModel",
+                "node_type": "ProcessModel",
                 "name": _first(model, _NAME_KEYS),
                 "guid": str(mid),
                 "modelType": _first(model, _TYPE_KEYS),
@@ -200,7 +146,7 @@ def ingest_model_graph(
     entities: list[dict[str, Any]] = [
         {
             "id": model_id,
-            "type": "ProcessModel",
+            "node_type": "ProcessModel",
             "name": _first(model, _NAME_KEYS),
             "guid": str(mid),
             "modelType": _first(model, _TYPE_KEYS),
@@ -221,7 +167,7 @@ def ingest_model_graph(
         entities.append(
             {
                 "id": node_id,
-                "type": _epc_class(obj_type),
+                "node_type": _epc_class(obj_type),
                 "name": _first(obj, _NAME_KEYS),
                 "guid": str(oid),
                 "objectType": obj_type,
@@ -229,7 +175,7 @@ def ingest_model_graph(
             }
         )
         relationships.append(
-            {"source": model_id, "target": node_id, "type": "hasObject"}
+            {"source": model_id, "target": node_id, "relationship": "hasObject"}
         )
 
     for conn in connections or []:
@@ -255,21 +201,31 @@ def ingest_model_graph(
             entities.append(
                 {
                     "id": conn_id,
-                    "type": "ProcessConnection",
+                    "node_type": "ProcessConnection",
                     "guid": str(cid),
                     "connectionType": _first(conn, _TYPE_KEYS),
                     "externalToolId": str(cid),
                 }
             )
             relationships.append(
-                {"source": model_id, "target": conn_id, "type": "hasConnection"}
+                {"source": model_id, "target": conn_id, "relationship": "hasConnection"}
             )
             relationships.append(
-                {"source": conn_id, "target": src_id, "type": "connectionSource"}
+                {
+                    "source": conn_id,
+                    "target": src_id,
+                    "relationship": "connectionSource",
+                }
             )
             relationships.append(
-                {"source": conn_id, "target": tgt_id, "type": "connectionTarget"}
+                {
+                    "source": conn_id,
+                    "target": tgt_id,
+                    "relationship": "connectionTarget",
+                }
             )
-        relationships.append({"source": src_id, "target": tgt_id, "type": "flowsTo"})
+        relationships.append(
+            {"source": src_id, "target": tgt_id, "relationship": "flowsTo"}
+        )
 
     return ingest_entities(entities, relationships, client=client, graph=graph)
