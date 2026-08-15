@@ -61,7 +61,7 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
-| `ARIS_SSL_VERIFY` | `True` | Verify TLS (required; configure a trusted CA bundle for private PKI) |
+| `ARIS_SSL_VERIFY` | `True` | Verify TLS (set False for self-signed / homelab tenants) |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
 | `ARIS_CLIENT_SECRET` | secret-injected |  |
@@ -195,19 +195,19 @@ One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
 | `knucklessg1/aris-mcp:mcp` | `--target mcp` | `aris-mcp[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `aris-mcp` |
-| `knucklessg1/aris-mcp:latest` | `--target agent` (default) | `aris-mcp[agent]` — **full** agent runtime + epistemic-graph engine | `aris-agent` |
+| `knucklessg1/aris-mcp:1.1.0` | `--target agent` (default) | `aris-mcp[agent]` — **full** agent runtime + epistemic-graph engine | `aris-agent` |
 
 ```bash
 docker build --target mcp   -t knucklessg1/aris-mcp:mcp    docker/   # slim MCP server
-docker build --target agent -t knucklessg1/aris-mcp:latest docker/   # full agent
+docker build --target agent -t knucklessg1/aris-mcp:1.1.0 docker/   # full agent
 ```
 
 `docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/agent.compose.yml` runs the
-agent (`:latest`) with a co-located `:mcp` sidecar.
+agent (`:1.1.0`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
+The **full agent** (`[agent]` / `:1.1.0`) embeds the **epistemic-graph** engine (pulled in
 transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
 across multiple agents — run **epistemic-graph as its own database container** and point the
 agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
@@ -244,7 +244,7 @@ to just this package. Ask your agent to **"deploy `aris-mcp` with agent-os-genes
 |------|---------|
 | Bare-metal, prod (PyPI) | `uvx aris-mcp` · or `uv tool install aris-mcp` |
 | Bare-metal, dev (editable) | `uv pip install -e ".[all]"` · or `pip install -e ".[all]"` |
-| Container, prod | deploy `knucklessg1/aris-mcp:latest` via docker-compose / swarm / podman / podman-compose / kubernetes |
+| Container, prod | deploy `knucklessg1/aris-mcp:1.1.0` via docker-compose / swarm / podman / podman-compose / kubernetes |
 | Container, dev (editable) | deploy `docker/compose.dev.yml` (source-mounted at `/src`; edits live on restart) |
 
 Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.

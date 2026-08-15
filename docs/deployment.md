@@ -206,7 +206,7 @@ It reads a sibling `.env` and publishes the HTTP server on `:8000`:
 ```yaml
 services:
   aris-mcp:
-    image: knucklessg1/aris-mcp:latest
+    image: knucklessg1/aris-mcp:1.1.0
     container_name: aris-mcp
     hostname: aris-mcp
     restart: always
@@ -251,7 +251,7 @@ container name and publishing the agent on `:8080`:
 # docker/agent.compose.yml
 services:
   aris-agent:
-    image: knucklessg1/aris-mcp:latest
+    image: knucklessg1/aris-mcp:1.1.0
     container_name: aris-agent
     hostname: aris-agent
     restart: always

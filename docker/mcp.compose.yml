@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   aris-mcp:
-    image: knucklessg1/aris-mcp:latest
+    image: knucklessg1/aris-mcp:1.1.0
     container_name: aris-mcp
     hostname: aris-mcp
     restart: always
