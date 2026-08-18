@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://knuckles-team.github.io/aris-mcp/usage/">
       
       
-        <link rel="prev" href="../deployment/">
+        <link rel="prev" href="../configuration/">
       
       
         <link rel="next" href="../platform/">
@@ -310,6 +310,25 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../configuration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration, trust, and privacy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -512,6 +531,33 @@
     
   
     Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration, trust, and privacy
   
 
     
@@ -842,23 +888,23 @@ environment with <code>get_client</code>, or construct it directly.</p>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Reads</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">models</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">list_models</span><span class="p">()</span>                       <span class="c1"># model inventory</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">objects</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_objects</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>  <span class="c1"># EPC functions / events / operators</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">conns</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_connections</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)</span><span class="c1"># control-flow connections</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">attrs</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_attributes</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)</span> <span class="c1"># model attributes</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">objects</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_objects</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">)</span>  <span class="c1"># EPC functions / events / operators</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">conns</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_connections</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">)</span><span class="c1"># control-flow connections</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">attrs</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_attributes</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">)</span> <span class="c1"># model attributes</span>
 </span></code></pre></div>
 <p>Construct the client directly:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aris_mcp.api_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArisApi</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">api</span> <span class="o">=</span> <span class="n">ArisApi</span><span class="p">(</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://your-aris/abs/api&quot;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">token</span><span class="o">=</span><span class="s2">&quot;your-api-token&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://your-aris/abs/api"</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">token</span><span class="o">=</span><span class="s2">"your-api-token"</span><span class="p">,</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">verify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">models</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">list_models</span><span class="p">()</span>
 </span></code></pre></div>
 <h3 id="writes">Writes<a class="headerlink" href="#writes" title="Permanent link">&para;</a></h3>
 <p>Attribute writeback is gated by <code>ARIS_ENABLE_WRITE</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">api</span><span class="o">.</span><span class="n">set_model_attributes</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kg_intelligence&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">})</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">api</span><span class="o">.</span><span class="n">set_model_attributes</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"kg_intelligence"</span><span class="p">:</span> <span class="s2">"..."</span><span class="p">})</span>
 </span></code></pre></div>
 <h2 id="as-a-cli">As a CLI<a class="headerlink" href="#as-a-cli" title="Permanent link">&para;</a></h2>
 <p>The package installs two console scripts.</p>
@@ -908,7 +954,7 @@ container recipes.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../deployment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Deployment">
+          <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration, trust, and privacy">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -918,7 +964,7 @@ container recipes.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Deployment
+                Configuration, trust, and privacy
               </div>
             </div>
           </a>

@@ -312,6 +312,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../configuration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration, trust, and privacy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../usage/" class="md-tabs__link">
         
   
@@ -512,6 +531,33 @@
     
   
     Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration, trust, and privacy
   
 
     
@@ -797,7 +843,7 @@ common ARIS Connect ABS REST layout.</p>
 </tr>
 <tr>
 <td><code>ARIS_SSL_VERIFY</code></td>
-<td>Verify TLS (set <code>False</code> for self-signed)</td>
+<td>Verify TLS (required; configure a trusted CA bundle for private PKI)</td>
 <td><code>True</code></td>
 </tr>
 <tr>
@@ -808,7 +854,7 @@ common ARIS Connect ABS REST layout.</p>
 </tbody>
 </table>
 <p>If your tenant's paths differ from the ABS defaults, set <code>ARIS_PATHS_JSON</code>, e.g.:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="s2">&quot;v2/repository/models&quot;</span><span class="p">,</span><span class="nt">&quot;model_objects&quot;</span><span class="p">:</span><span class="s2">&quot;v2/models/{model_id}/objects&quot;</span><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="nt">"models"</span><span class="p">:</span><span class="s2">"v2/repository/models"</span><span class="p">,</span><span class="nt">"model_objects"</span><span class="p">:</span><span class="s2">"v2/models/{model_id}/objects"</span><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
 <p>The client tries credentials in order (first match wins):</p>
@@ -821,11 +867,12 @@ common ARIS Connect ABS REST layout.</p>
 </ol>
 <h2 id="connect-aris-mcp">Connect aris-mcp<a class="headerlink" href="#connect-aris-mcp" title="Permanent link">&para;</a></h2>
 <p>Point the connector at your tenant and provide credentials:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_API_BASE</span><span class="o">=</span>http://your-aris/abs/api
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_API_BASE</span><span class="o">=</span>https://aris.example.invalid/abs/api
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_TOKEN</span><span class="o">=</span>your-api-token
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_SSL_VERIFY</span><span class="o">=</span>False<span class="w">          </span><span class="c1"># plain HTTP / self-signed homelab</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>aris-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_SSL_VERIFY</span><span class="o">=</span>True
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SSL_CERT_FILE</span><span class="o">=</span>/run/secrets/enterprise-ca.pem
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>aris-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
 </span></code></pre></div>
 <p>Or with the OAuth2 client-credentials flow:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ARIS_API_BASE</span><span class="o">=</span>https://your-tenant.ariscloud.com/api
