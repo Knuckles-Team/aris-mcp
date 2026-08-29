@@ -7,6 +7,39 @@ import requests
 import urllib3
 
 
+def _resolve_request_url(base_url: str, endpoint: str) -> str:
+    if endpoint.startswith("http"):
+        return endpoint
+    return urljoin(base_url, endpoint.lstrip("/"))
+
+
+def _build_request_headers(
+    content_type: str | None, accept: str | None, headers: dict[str, str] | None
+) -> dict[str, str]:
+    req_headers: dict[str, str] = {}
+    if content_type:
+        req_headers["Content-Type"] = content_type
+    if accept:
+        req_headers["Accept"] = accept
+    if headers:
+        req_headers.update(headers)
+    return req_headers
+
+
+def _parse_response_body(response: requests.Response) -> Any:
+    """Return parsed JSON, or a text/success fallback dict."""
+    if response.status_code == 204 or not response.text.strip():
+        return {"status": "success"}
+
+    ctype = response.headers.get("Content-Type", "")
+    if "json" in ctype:
+        try:
+            return response.json()
+        except Exception:
+            pass
+    return {"status": "success", "text": response.text}
+
+
 class ApiClientBase:
     """Thin ``requests.Session`` wrapper with token / basic-auth support.
 
@@ -55,18 +88,8 @@ class ApiClientBase:
         Returns a dict/list when the response is JSON, otherwise
         ``{"status": "success", "text": <body>}``. Raises on HTTP >= 400.
         """
-        if endpoint.startswith("http"):
-            url = endpoint
-        else:
-            url = urljoin(self.base_url, endpoint.lstrip("/"))
-
-        req_headers: dict[str, str] = {}
-        if content_type:
-            req_headers["Content-Type"] = content_type
-        if accept:
-            req_headers["Accept"] = accept
-        if headers:
-            req_headers.update(headers)
+        url = _resolve_request_url(self.base_url, endpoint)
+        req_headers = _build_request_headers(content_type, accept, headers)
 
         response = self._session.request(
             method=method,
@@ -80,13 +103,4 @@ class ApiClientBase:
         if response.status_code >= 400:
             raise Exception(f"API error: {response.status_code} - {response.text}")
 
-        if response.status_code == 204 or not response.text.strip():
-            return {"status": "success"}
-
-        ctype = response.headers.get("Content-Type", "")
-        if "json" in ctype:
-            try:
-                return response.json()
-            except Exception:
-                pass
-        return {"status": "success", "text": response.text}
+        return _parse_response_body(response)
