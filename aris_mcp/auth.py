@@ -1,15 +1,19 @@
 """Identity credentials loader for the ARIS client facade."""
 
 import requests
-from agent_utilities.base_utilities import get_logger, to_boolean
+from agent_utilities.base_utilities import get_logger
 from agent_utilities.core.config import setting
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 from aris_mcp.api.api_client_aris import ArisApi
 
 logger = get_logger(__name__)
 
 
-def _fetch_oauth_token() -> str | None:
+def _fetch_oauth_token(tls_profile: ResolvedTLSProfile) -> str | None:
     """Fetch an OAuth2 client-credentials token when configured, else ``None``.
 
     ARIS Cloud / Connect issue tokens via an OAuth2 ``client_credentials`` flow
@@ -31,7 +35,7 @@ def _fetch_oauth_token() -> str | None:
             data=data,
             auth=(client_id, client_secret),
             timeout=30,
-            verify=to_boolean(setting("ARIS_SSL_VERIFY", True)),
+            **tls_profile.requests_kwargs(),
         )
         resp.raise_for_status()
         return resp.json().get("access_token")
@@ -46,7 +50,12 @@ def get_client() -> ArisApi:
     Connection:
         ``ARIS_API_BASE`` — REST base URL (default
         ``http://localhost/abs/api``; for ARIS Cloud this is the tenant API
-        root). ``ARIS_SSL_VERIFY`` (default ``True``).
+        root). TLS is resolved through the shared ``AgentConfig`` transport
+        profile: the standard ``SSL_CERT_FILE``/``SSL_CERT_DIR`` for a
+        system-wide CA, or a named profile (``ARIS_TLS_PROFILE`` /
+        ``ARIS_TLS_PROFILE_REF``) resolved from a ``TLS_PROFILES`` catalog for
+        a private-PKI tenant's CA/client-cert material. Verification is
+        always on — there is no boolean escape hatch.
 
     Auth (first match wins):
         1. OAuth2 client-credentials — ``ARIS_OAUTH_URL`` + ``ARIS_CLIENT_ID`` +
@@ -63,9 +72,13 @@ def get_client() -> ArisApi:
     import json
 
     base_url = setting("ARIS_API_BASE", "http://localhost/abs/api")
-    verify = to_boolean(setting("ARIS_SSL_VERIFY", True))
+    tls_profile = resolve_configured_tls_profile(
+        "aris",
+        profile_name=setting("ARIS_TLS_PROFILE", "") or None,
+        profile_ref=setting("ARIS_TLS_PROFILE_REF", "") or None,
+    )
 
-    token = _fetch_oauth_token() or (setting("ARIS_TOKEN") or None)
+    token = _fetch_oauth_token(tls_profile) or (setting("ARIS_TOKEN") or None)
     username = setting("ARIS_USERNAME") or None
     password = setting("ARIS_PASSWORD") or None
 
@@ -82,6 +95,6 @@ def get_client() -> ArisApi:
         token=token,
         username=username,
         password=password,
-        verify=verify,
+        tls_profile=tls_profile,
         paths=paths,
     )

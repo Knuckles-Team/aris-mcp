@@ -21,7 +21,7 @@ common ARIS Connect ABS REST layout.
 | Variable | Purpose | Default |
 |---|---|---|
 | `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | `http://localhost/abs/api` |
-| `ARIS_SSL_VERIFY` | Verify TLS (required; configure a trusted CA bundle for private PKI) | `True` |
+| `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | Named outbound TLS policy from AgentConfig (system trust by default); verification is mandatory | _(empty)_ |
 | `ARIS_PATHS_JSON` | JSON overriding REST path templates per tenant | — |
 
 If your tenant's paths differ from the ABS defaults, set `ARIS_PATHS_JSON`, e.g.:
@@ -47,7 +47,6 @@ Point the connector at your tenant and provide credentials:
 ```bash
 export ARIS_API_BASE=https://aris.example.invalid/abs/api
 export ARIS_TOKEN=your-api-token
-export ARIS_SSL_VERIFY=True
 export SSL_CERT_FILE=/run/secrets/enterprise-ca.pem
 
 aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000

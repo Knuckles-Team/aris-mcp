@@ -4,7 +4,10 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
-import urllib3
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 
 def _resolve_request_url(base_url: str, endpoint: str) -> str:
@@ -55,17 +58,14 @@ class ApiClientBase:
         token: str | None = None,
         username: str | None = None,
         password: str | None = None,
-        verify: bool = True,
+        tls_profile: ResolvedTLSProfile | None = None,
     ):
         self.base_url = base_url.rstrip("/") + "/"
         self.token = token
         self.username = username
         self.password = password
-        self._session = requests.Session()
-        self._session.verify = verify
-
-        if not verify:
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        self.tls_profile = tls_profile or resolve_configured_tls_profile("aris")
+        self._session = self.tls_profile.configure_requests_session(requests.Session())
 
         if token:
             self._session.headers.update({"Authorization": f"Bearer {token}"})
@@ -104,3 +104,8 @@ class ApiClientBase:
             raise Exception(f"API error: {response.status_code} - {response.text}")
 
         return _parse_response_body(response)
+
+    def close(self) -> None:
+        """Release transport resources and runtime-only TLS material."""
+        self._session.close()
+        self.tls_profile.cleanup()
