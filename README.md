@@ -61,7 +61,8 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
-| `ARIS_SSL_VERIFY` | `True` | Verify TLS (set False for self-signed / homelab tenants) |
+| `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see agent-utilities' transport_security. |
+| `ARIS_TLS_PROFILE_REF` | — |  |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
 | `ARIS_CLIENT_SECRET` | secret-injected |  |
@@ -99,11 +100,11 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
 | `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | `openai` | LLM provider for the agent |
-| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_29 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -113,7 +114,7 @@ Every variable the server reads, grouped by concern.
 | Variable | Purpose | Default |
 |----------|---------|---------|
 | `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | `http://localhost/abs/api` |
-| `ARIS_SSL_VERIFY` | verify TLS | `True` |
+| `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | named outbound TLS policy from AgentConfig; verification is mandatory | _(empty, system trust)_ |
 | `ARIS_OAUTH_URL` / `ARIS_CLIENT_ID` / `ARIS_CLIENT_SECRET` / `ARIS_TENANT` | OAuth2 client-credentials (preferred) | — |
 | `ARIS_TOKEN` | static bearer token (alt to OAuth) | — |
 | `ARIS_USERNAME` / `ARIS_PASSWORD` | HTTP basic (alt) | — |

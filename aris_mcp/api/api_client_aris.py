@@ -19,6 +19,7 @@ only the paths move.
 
 from typing import Any
 
+from agent_utilities.core.transport_security import ResolvedTLSProfile
 from aris_mcp.api.api_client_base import ApiClientBase
 
 # Default ARIS Connect ABS REST path templates. Override per tenant if needed.
@@ -41,11 +42,15 @@ class ArisApi(ApiClientBase):
         token: str | None = None,
         username: str | None = None,
         password: str | None = None,
-        verify: bool = True,
+        tls_profile: ResolvedTLSProfile | None = None,
         paths: dict[str, str] | None = None,
     ):
         super().__init__(
-            base_url, token=token, username=username, password=password, verify=verify
+            base_url,
+            token=token,
+            username=username,
+            password=password,
+            tls_profile=tls_profile,
         )
         self.paths = {**DEFAULT_PATHS, **(paths or {})}
 

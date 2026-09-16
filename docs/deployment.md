@@ -187,7 +187,7 @@ curl -s http://localhost:8000/health        # {"status":"OK"}
 |---|---|---|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root) |
 | `ARIS_TOKEN` | _(empty)_ | Static bearer token (alt to OAuth / basic) |
-| `ARIS_SSL_VERIFY` | `True` | Verify TLS (required; configure a trusted CA bundle for private PKI) |
+| `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | _(empty)_ | Named outbound TLS policy from AgentConfig (system trust by default); verification is mandatory and cannot be disabled |
 | `ARIS_ENABLE_WRITE` | `False` | Allow gated attribute writeback |
 
 OAuth2 client-credentials (`ARIS_OAUTH_URL` / `ARIS_CLIENT_ID` / `ARIS_CLIENT_SECRET`
@@ -219,7 +219,8 @@ services:
       - TRANSPORT=streamable-http
       - ARIS_API_BASE
       - ARIS_TOKEN
-      - ARIS_SSL_VERIFY
+      - ARIS_TLS_PROFILE
+      - ARIS_TLS_PROFILE_REF
     ports:
       - "8000:8000"
     healthcheck:
@@ -305,8 +306,7 @@ Add to your client's `mcp_config.json`:
       "args": ["run", "aris-mcp"],
       "env": {
         "ARIS_API_BASE": "http://your-aris/abs/api",
-        "ARIS_TOKEN": "your-api-token",
-        "ARIS_SSL_VERIFY": "True"
+        "ARIS_TOKEN": "your-api-token"
       }
     }
   }

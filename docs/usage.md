@@ -46,8 +46,7 @@ from aris_mcp.api_client import ArisApi
 api = ArisApi(
     base_url="http://your-aris/abs/api",
     token="your-api-token",
-    verify=True,
-)
+)  # TLS is resolved through the shared AgentConfig transport profile
 models = api.list_models()
 ```
 

@@ -44,7 +44,7 @@ Connect via the `mcp-client` skill against the **`aris-mcp`** MCP server.
 | `ARIS_OAUTH_URL` + `ARIS_CLIENT_ID` + `ARIS_CLIENT_SECRET` | one auth path | OAuth2 client-credentials (+ optional `ARIS_TENANT`) |
 | `ARIS_TOKEN` | one auth path | static bearer token |
 | `ARIS_USERNAME` / `ARIS_PASSWORD` | one auth path | HTTP basic |
-| `ARIS_SSL_VERIFY` | optional | TLS verification toggle |
+| `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | optional | Named outbound TLS policy (verification is mandatory) |
 | `ARIS_PATHS_JSON` | optional | JSON overriding the default REST path templates per tenant |
 
 `MCP_TOOL_MODE` (`condensed`|`verbose`|`both`) selects the condensed surface (below)
