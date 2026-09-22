@@ -8,7 +8,7 @@ off) so a read-only tenant/credential cannot be asked to mutate models.
 
 import json
 import os
-from typing import Any
+from typing import Any, Literal
 
 from agent_utilities.base_utilities import to_boolean
 from fastmcp import FastMCP
@@ -30,7 +30,9 @@ def register_aris_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"model"})
     async def aris_model(
-        action: str = Field(
+        action: Literal[
+            "attributes", "connections", "get", "list", "objects", "set_attributes"
+        ] = Field(
             description=(
                 "Model action: 'list' (inventory), 'get' (one model), "
                 "'objects' (EPC functions/events/rules), 'connections' "

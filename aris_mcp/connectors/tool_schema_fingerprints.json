@@ -1,8 +1,8 @@
 {
-  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "aris-mcp",
   "schema_version": "1",
   "tools": {
-    "aris_model": "399b66572950aedfdf318ccee6e1479962a17eb3ebf787d439c183234226918c"
+    "aris_model": "abb49c01cf3e337fcc4a9f57744e92c237986a5d38d7139fd9b9db5aa8968832"
   }
 }
