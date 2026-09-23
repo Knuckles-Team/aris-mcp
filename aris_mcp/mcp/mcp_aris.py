@@ -28,7 +28,18 @@ def _writes_enabled() -> bool:
 def register_aris_tools(mcp: FastMCP) -> None:
     """Register ARIS model/object read + (gated) write tools."""
 
-    @mcp.tool(tags={"model"})
+    @mcp.tool(
+        tags={"model"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def aris_model(
         action: Literal[
             "attributes", "connections", "get", "list", "objects", "set_attributes"
