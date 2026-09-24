@@ -10,7 +10,7 @@ import json
 import os
 from typing import Any, Literal
 
-from agent_utilities.base_utilities import to_boolean
+from agent_connector_sdk.utilities import to_boolean
 from fastmcp import FastMCP
 from pydantic import Field
 

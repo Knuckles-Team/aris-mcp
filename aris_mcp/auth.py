@@ -1,12 +1,10 @@
 """Identity credentials loader for the ARIS client facade."""
 
 import requests
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.config import setting
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.config import setting
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
+from agent_connector_sdk.utilities import get_logger
 
 from aris_mcp.api.api_client_aris import ArisApi
 
@@ -72,7 +70,7 @@ def get_client() -> ArisApi:
     import json
 
     base_url = setting("ARIS_API_BASE", "http://localhost/abs/api")
-    tls_profile = resolve_configured_tls_profile(
+    tls_profile = resolve_tls_profile(
         "aris",
         profile_name=setting("ARIS_TLS_PROFILE", "") or None,
         profile_ref=setting("ARIS_TLS_PROFILE_REF", "") or None,
