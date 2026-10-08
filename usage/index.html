@@ -846,7 +846,7 @@
 
 <h1 id="usage-api-cli-mcp">Usage — API / CLI / MCP<a class="headerlink" href="#usage-api-cli-mcp" title="Permanent link">&para;</a></h1>
 <p><code>aris-mcp</code> exposes the same capability three ways: as <strong>MCP tools</strong> an agent calls,
-as a <strong>Python API</strong> (<code>ArisApi</code>) you import, and as <strong>command-line servers</strong>. The
+as a <strong>Python API</strong> (<code>ArisApi</code>) the operator import, and as <strong>command-line servers</strong>. The
 layered design is described in <a href="../overview/">Architecture</a>.</p>
 <h2 id="as-an-mcp-server">As an MCP server<a class="headerlink" href="#as-an-mcp-server" title="Permanent link">&para;</a></h2>
 <p>Once <a href="../deployment/">deployed</a>, the server registers two action-routed tools. Reads
@@ -881,7 +881,7 @@ work with no configuration beyond the connection details and valid credentials.<
 <h2 id="as-a-python-api">As a Python API<a class="headerlink" href="#as-a-python-api" title="Permanent link">&para;</a></h2>
 <p><code>ArisApi</code> is a granular <code>requests</code>-based facade covering model inventory, EPC
 objects, connections, and attribute operations. Build one straight from the
-environment with <code>get_client</code>, or construct it directly.</p>
+environment with <code>get_client</code>, or build it directly.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aris_mcp.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_client</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">api</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>        <span class="c1"># reads ARIS_* from the environment / .env</span>
@@ -892,7 +892,7 @@ environment with <code>get_client</code>, or construct it directly.</p>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">conns</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_connections</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">)</span><span class="c1"># control-flow connections</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">attrs</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_model_attributes</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"..."</span><span class="p">)</span> <span class="c1"># model attributes</span>
 </span></code></pre></div>
-<p>Construct the client directly:</p>
+<p>Build the client directly:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aris_mcp.api_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArisApi</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">api</span> <span class="o">=</span> <span class="n">ArisApi</span><span class="p">(</span>
