@@ -123,7 +123,7 @@ Every variable the server reads, grouped by concern.
 
 > **Tenant differences.** ARIS deployments vary (Connect ABS portal vs the public
 > ARIS API; on-prem vs Cloud). The defaults follow the common ARIS Connect ABS
-> REST layout. If your tenant's paths differ, set `ARIS_PATHS_JSON`, e.g.
+> REST layout. If the operator's tenant's paths differ, set `ARIS_PATHS_JSON`, e.g.
 > `{"models":"v2/repository/models","model_objects":"v2/models/{model_id}/objects"}`.
 
 ### MCP server / transport
@@ -167,15 +167,15 @@ The action-routed tools can be disabled via their toggle env var (set to `false`
 > that pulls only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`). It deliberately
 > **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
 > `dspy`, `llama-index`, `tree-sitter`), so `uvx`/container installs are dramatically
-> smaller and faster. Use the full `[agent]` extra only when you need the integrated
+> smaller and faster. Use the full `[agent]` extra only when the operator need the integrated
 > Pydantic AI agent.
 
-Pick the extra that matches what you want to run:
+Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `aris-mcp[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
-| `aris-mcp[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated agent** |
+| `aris-mcp[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
+| `aris-mcp[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | The operator run the **integrated agent** |
 | `aris-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -228,7 +228,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 1. **stdio** — `uv run aris-mcp` (see `mcp_config.json`).
 2. **streamable-http** — `aris-mcp --transport streamable-http --port 8000`.
 3. **local container** — build from `docker/` and run with the env above.
-4. **remote** — point your client at `https://aris-mcp.example.invalid/mcp`.
+4. **remote** — point the operator's client at `https://aris-mcp.example.invalid/mcp`.
 
 
 <!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->

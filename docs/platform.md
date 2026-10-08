@@ -24,7 +24,7 @@ common ARIS Connect ABS REST layout.
 | `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | Named outbound TLS policy from AgentConfig (system trust by default); verification is mandatory | _(empty)_ |
 | `ARIS_PATHS_JSON` | JSON overriding REST path templates per tenant | — |
 
-If your tenant's paths differ from the ABS defaults, set `ARIS_PATHS_JSON`, e.g.:
+If the operator's tenant's paths differ from the ABS defaults, set `ARIS_PATHS_JSON`, e.g.:
 
 ```json
 {"models":"v2/repository/models","model_objects":"v2/models/{model_id}/objects"}
@@ -42,7 +42,7 @@ The client tries credentials in order (first match wins):
 
 ## Connect aris-mcp
 
-Point the connector at your tenant and provide credentials:
+Point the connector at the operator's tenant and provide credentials:
 
 ```bash
 export ARIS_API_BASE=https://aris.example.invalid/abs/api

@@ -116,7 +116,7 @@ OAuth2 client-credentials (`ARIS_OAUTH_URL` / `ARIS_CLIENT_ID` / `ARIS_CLIENT_SE
 to a static token — see [Backing Platform](platform.md). Plus `HOST` / `PORT` /
 `TRANSPORT` for HTTP transports. Copy
 [`.env.example`](https://github.com/Knuckles-Team/aris-mcp/blob/main/.env.example)
-to `.env` and populate the values you use; the server remains inactive when no
+to `.env` and populate the values the operator use; the server remains inactive when no
 credentials are present.
 
 ## Docker Compose
@@ -192,7 +192,7 @@ services:
 
 ## Behind a Caddy reverse proxy
 
-Expose the HTTP server on a hostname with automatic TLS. Add to your `Caddyfile`:
+Expose the HTTP server on a hostname with automatic TLS. Add to the operator's `Caddyfile`:
 
 ```caddy
 # Deployment-selected HTTPS hostname
@@ -217,7 +217,7 @@ docker compose -f services/caddy/compose.yml exec caddy caddy reload --config /e
 
 ## Register with an MCP client
 
-Add to your client's `mcp_config.json`:
+Add to the operator's client's `mcp_config.json`:
 
 ```json
 {

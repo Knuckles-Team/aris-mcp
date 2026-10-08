@@ -1,7 +1,7 @@
 # Usage — API / CLI / MCP
 
 `aris-mcp` exposes the same capability three ways: as **MCP tools** an agent calls,
-as a **Python API** (`ArisApi`) you import, and as **command-line servers**. The
+as a **Python API** (`ArisApi`) the operator import, and as **command-line servers**. The
 layered design is described in [Architecture](overview.md).
 
 ## As an MCP server
@@ -24,7 +24,7 @@ Example agent prompts that map onto these tools:
 
 `ArisApi` is a granular `requests`-based facade covering model inventory, EPC
 objects, connections, and attribute operations. Build one straight from the
-environment with `get_client`, or construct it directly.
+environment with `get_client`, or build it directly.
 
 ```python
 from aris_mcp.auth import get_client
@@ -38,7 +38,7 @@ conns = api.get_model_connections(model_id="...")# control-flow connections
 attrs = api.get_model_attributes(model_id="...") # model attributes
 ```
 
-Construct the client directly:
+Build the client directly:
 
 ```python
 from aris_mcp.api_client import ArisApi
