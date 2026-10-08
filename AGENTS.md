@@ -53,8 +53,8 @@ is what Dependabot flags. Rules:
 
 1. **Never hand-edit a version string.** Change the version ONLY via
    `bump-my-version bump {patch|minor|major}` (a.k.a. `bump2version`), which rewrites every file
-   registered in `.bumpversion.cfg` in one atomic, tagged commit. If you edited the version in
-   `pyproject.toml` by hand, you created drift — revert and use the bumper.
+   registered in `.bumpversion.cfg` in one atomic, tagged commit. If the operator edited the version in
+   `pyproject.toml` by hand, the operator created drift — revert and use the bumper.
 2. **Every version-bearing file must be registered in `.bumpversion.cfg`** — at minimum
    `pyproject.toml` AND `README.md`, plus `docker/Dockerfile` and any module `__version__`. Never
    add a file that embeds the version without a `[bumpversion:file:...]` entry for it.
@@ -67,7 +67,7 @@ is what Dependabot flags. Rules:
 
 ## Upstream currency edict — target the newest release; a pin is a hypothesis, not a fact (READ BEFORE capping, deferring, or opt-in-gating an upgrade)
 
-This governs how we treat **other people's** releases, deprecations, and version caps in
+This governs how this repository treat **other people's** releases, deprecations, and version caps in
 this repo (fleet-wide edict, propagated from `agent-utilities/AGENTS.md`).
 
 1. **Latest by default.** Target the newest upstream release -- including a pre-release
@@ -86,7 +86,7 @@ this repo (fleet-wide edict, propagated from `agent-utilities/AGENTS.md`).
    -- never an indefinite pin.
 4. **Deprecations are fixed on sight, in code AND in tests.** A `DeprecationWarning` from
    an upstream library is a defect to fix now, not noise to filter. **Never** silence one
-   with a warning filter, `# noqa`, or a pytest `filterwarnings` entry in order to go
+   with a warning filter, `# noqa`, or a pytest `filterwarnings` entry to go
    green.
 5. **Adopt upstream features rather than reimplementing them.** If upstream ships a
    capability this repo hand-rolled, migrate to theirs and delete the local one.
