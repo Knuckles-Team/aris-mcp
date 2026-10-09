@@ -3,18 +3,15 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. This package natively pushes its
 ARIS process data into the epistemic-graph knowledge graph as **typed OWL nodes**
 (:ProcessModel, :EPCFunction, :EPCEvent, :EPCRule, :ProcessConnection) + control-flow
-links, through the required ``agent_utilities.knowledge_graph.memory.native_ingest``
-authority — the one connector write path; there is no self-contained fallback
-transaction here.
+links, through the shared ``agent_connector_sdk.ingest`` knowledge-ingest facade — the
+one connector write path; there is no self-contained fallback transaction here.
 
-Entirely best-effort: with no agent-utilities KG stack, no reachable engine, or a
-malformed record, every entry point **no-ops** (returns ``None``), so the connector
-keeps working with zero KG infrastructure. Nodes carry the shared provenance
-(``domain``/``source``) and match the classes federated by ``aris_mcp.ontology``
-(aris.ttl).
+Entirely best-effort: with no reachable engine, or a malformed record, every entry
+point **no-ops** (returns ``None``), so the connector keeps working with zero KG
+infrastructure. Nodes match the classes federated by ``aris_mcp.ontology`` (aris.ttl).
 
 Only a thin mapper lives here (ARIS records → entity/relationship dicts); the write
-path is the shared ``native_ingest`` primitive.
+path is the shared ``agent_connector_sdk.ingest`` facade.
 """
 
 from __future__ import annotations
@@ -22,15 +19,23 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    NativeIngestError,
-    ingest_entities as _native_ingest_entities,
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    Entity,
+    IngestBinding,
+    IngestError,
+    IngestUnavailableError,
+    KnowledgeIngest,
+    Relationship,
+    current_ingest,
 )
 
 logger = logging.getLogger("aris_mcp.kg")
 
 _SOURCE = "aris-mcp"
 _DOMAIN = "aris"
+
+_BINDING = IngestBinding(connector="aris-mcp", stream=_DOMAIN)
 
 # ARIS records return under several key spellings depending on tenant/portal. These
 # alias tuples make the mapper resilient across ARIS Connect ABS vs. the public API.
@@ -51,38 +56,56 @@ def _first(rec: dict[str, Any], keys: tuple[str, ...]) -> Any:
     return None
 
 
-def ingest_entities(
+def _to_entity(record: dict[str, Any]) -> Entity:
+    return Entity(
+        id=record.get("id"),
+        node_type=record.get("node_type"),
+        properties={k: v for k, v in record.items() if k not in ("id", "node_type")},
+    )
+
+
+def _to_relationship(record: dict[str, Any]) -> Relationship:
+    props = {
+        k: v
+        for k, v in record.items()
+        if k not in ("source", "target", "relationship")
+    }
+    return Relationship(
+        source=record["source"],
+        target=record["target"],
+        relationship=record["relationship"],
+        properties=props or None,
+    )
+
+
+async def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,
     *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int] | None:
     """Write typed OWL nodes (+ edges) into epistemic-graph. Best-effort, never raises.
 
     ``entities``: ``[{"id":..., "node_type":<owl:Class>, ...props}]``.
     ``relationships``: ``[{"source":id, "target":id, "relationship":<link>}]``.
     Returns ``{"nodes":n, "edges":m}`` or ``None`` (empty input / no reachable engine /
-    malformed record). ``client``/``graph`` may be injected (tests); otherwise the
-    process-owned governed authority is resolved on demand.
+    malformed record). ``ingest`` may be injected (tests); otherwise the process-wide
+    facade is resolved on demand.
     """
     entities = [e for e in (entities or []) if e.get("id")]
     if not entities:
         return None
+    change_set = ChangeSet(
+        entities=tuple(_to_entity(e) for e in entities),
+        relationships=tuple(_to_relationship(r) for r in relationships or ()),
+    )
     try:
-        return _native_ingest_entities(
-            entities,
-            relationships,
-            source=source,
-            domain=domain,
-            client=client,
-            graph=graph,
-        )
-    except NativeIngestError as exc:
+        service = ingest or current_ingest()
+        receipt = await service.submit(_BINDING, change_set)
+    except (IngestUnavailableError, IngestError) as exc:
         logger.debug("KG ingest unavailable/failed: %s", exc)
         return None
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
 
 
 # ── ARIS-specific mappers ──────────────────────────────────────────────────
@@ -96,11 +119,10 @@ def _epc_class(obj_type: Any) -> str:
     return "EPCFunction"
 
 
-def ingest_models(
+async def ingest_models(
     models: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int] | None:
     """Map ARIS model records → :ProcessModel nodes and ingest."""
     entities: list[dict[str, Any]] = []
@@ -121,7 +143,7 @@ def ingest_models(
                 "externalToolId": str(mid),
             }
         )
-    return ingest_entities(entities, [], client=client, graph=graph)
+    return await ingest_entities(entities, [], ingest=ingest)
 
 
 def _model_node(model: dict[str, Any], model_id: str, mid: Any) -> dict[str, Any]:
@@ -210,13 +232,12 @@ def _connection_entities_and_edges(
     return entities, relationships
 
 
-def ingest_model_graph(
+async def ingest_model_graph(
     model: dict[str, Any],
     objects: list[dict[str, Any]] | None = None,
     connections: list[dict[str, Any]] | None = None,
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int] | None:
     """Map one model + its EPC objects + control-flow connections into the KG.
 
@@ -244,4 +265,4 @@ def ingest_model_graph(
         entities.extend(conn_entities)
         relationships.extend(conn_relationships)
 
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)

@@ -10,7 +10,7 @@ import json
 import os
 from typing import Any
 
-from agent_utilities.base_utilities import to_boolean
+from agent_connector_sdk.utilities import to_boolean
 from fastmcp import FastMCP
 from pydantic import Field
 
@@ -119,7 +119,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
             model = model if isinstance(model, dict) else {"guid": model_id}
             objects = objects if isinstance(objects, list) else []
             connections = connections if isinstance(connections, list) else []
-            result = ingest_model_graph(model, objects, connections)
+            result = await ingest_model_graph(model, objects, connections)
             return {
                 "model_id": model_id,
                 "objects": len(objects),
@@ -129,7 +129,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         models = api.list_models(p or None)
         models = models if isinstance(models, list) else [models]
         models = [m for m in models if isinstance(m, dict)]
-        result = ingest_models(models)
+        result = await ingest_models(models)
         return {"listed": len(models), "ingested": result}
 
     @mcp.tool(tags={"model", "kg"})
@@ -161,7 +161,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
             raise ValueError("aris_ingest_model_export requires 'model_id'.")
         raw = p.get("data_b64") or ""
         data = base64.b64decode(raw) if raw else b""
-        result = ingest_model_export(
+        result = await ingest_model_export(
             data,
             model_id=str(model_id),
             model_name=p.get("model_name", ""),
