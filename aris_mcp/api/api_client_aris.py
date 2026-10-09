@@ -19,7 +19,8 @@ only the paths move.
 
 from typing import Any
 
-from agent_utilities.core.transport_security import ResolvedTLSProfile
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+
 from aris_mcp.api.api_client_base import ApiClientBase
 
 # Default ARIS Connect ABS REST path templates. Override per tenant if needed.

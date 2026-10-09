@@ -1,78 +1,96 @@
 """Native epistemic-graph blob ingestion — Wire-First coverage for ARIS exports.
 
-Exercises ``ingest_model_export`` with a fake MediaStore (no engine required),
-asserting the store_media call carries the right media_type / mime / extra, and that
-the seam cleanly no-ops without an engine. CONCEPT:AU-KG.ingest.list-durable-media.
+Exercises ``ingest_model_export`` against a fake transport boundary (no engine
+required), asserting the content-addressed media record carries the right
+media_type / mime / provenance, and that the seam cleanly no-ops without an engine.
+CONCEPT:AU-KG.ingest.list-durable-media.
 """
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+from typing import Any
+
+import pytest
+from agent_connector_sdk.ingest import KnowledgeIngest
+
 from aris_mcp.kg_media import ingest_model_export
 
-
-class _StoredMedia:
-    def __init__(self, asset_id, digest):
-        self.asset_id = asset_id
-        self.digest = digest
+pytestmark = pytest.mark.asyncio
 
 
-class _FakeStore:
-    def __init__(self):
-        self.calls = []
+class _FakeTransport:
+    def __init__(self) -> None:
+        self.stored: list[bytes] = []
+        self.requests: list[Any] = []
 
-    def store_media(self, data, *, media_type, mime_type, source, name, extra):
-        self.calls.append(
-            {
-                "size": len(data),
-                "media_type": media_type,
-                "mime_type": mime_type,
-                "source": source,
-                "name": name,
-                "extra": extra,
-            }
+    async def source_status(self, connector: str, stream: str) -> Any:
+        return SimpleNamespace(accepted_checkpoint=None)
+
+    async def store_blob(self, data: bytes) -> str:
+        self.stored.append(data)
+        return f"digest-{len(self.stored)}"
+
+    async def submit(self, request: Any) -> Any:
+        self.requests.append(request)
+        record = request.records[0]
+        return SimpleNamespace(
+            affected_count=len(request.records),
+            relationship_count=len(request.relationships),
+            raw_admissions=[
+                SimpleNamespace(
+                    record_id=record.record_id,
+                    raw_digest="a" * 64,
+                    stream=record.stream,
+                    deduplicated=False,
+                )
+            ],
         )
-        return _StoredMedia("asset-1", "deadbeef" * 8)
 
 
-def test_ingest_model_export_stores_blob():
-    store = _FakeStore()
-    res = ingest_model_export(
+def _service():
+    transport = _FakeTransport()
+    return KnowledgeIngest(transport, loop=None), transport
+
+
+async def test_ingest_model_export_stores_blob():
+    service, transport = _service()
+    res = await ingest_model_export(
         b"<bpmn>...</bpmn>",
         model_id="M1",
         model_name="Order-to-Cash",
         mime_type="application/bpmn+xml",
         export_format="bpmn",
-        media_store=store,
+        ingest=service,
     )
     assert res is not None
-    assert res["asset_id"] == "asset-1"
+    assert res["asset_id"] is not None
     assert res["media_type"] == "document"
     assert res["size_bytes"] == len(b"<bpmn>...</bpmn>")
-    call = store.calls[0]
-    assert call["source"] == "aris-mcp"
-    assert call["mime_type"] == "application/bpmn+xml"
-    assert call["extra"]["model_id"] == "aris:model:M1"
-    assert call["extra"]["asset_class"] == "ModelExport"
-    assert call["extra"]["export_format"] == "bpmn"
+    assert transport.stored == [b"<bpmn>...</bpmn>"]
+    record = transport.requests[0].records[0]
+    assert record.payload["model_id"] == "aris:model:M1"
+    assert record.payload["asset_class"] == "ModelExport"
+    assert record.payload["export_format"] == "bpmn"
 
 
-def test_ingest_model_export_image_bucket():
-    store = _FakeStore()
-    ingest_model_export(
+async def test_ingest_model_export_image_bucket():
+    service, _ = _service()
+    res = await ingest_model_export(
         b"\x89PNG...",
         model_id="M2",
         mime_type="image/png",
-        media_store=store,
+        ingest=service,
     )
-    assert store.calls[0]["media_type"] == "image"
+    assert res["media_type"] == "image"
 
 
-def test_ingest_empty_bytes_is_noop():
-    store = _FakeStore()
-    assert ingest_model_export(b"", model_id="M1", media_store=store) is None
-    assert store.calls == []
+async def test_ingest_empty_bytes_is_noop():
+    service, transport = _service()
+    assert await ingest_model_export(b"", model_id="M1", ingest=service) is None
+    assert transport.stored == []
 
 
-def test_ingest_noops_without_engine():
-    # No injected store + no reachable engine -> clean no-op.
-    assert ingest_model_export(b"data", model_id="M1") is None
+async def test_ingest_noops_without_engine():
+    # No injected service + no reachable engine -> clean no-op.
+    assert await ingest_model_export(b"data", model_id="M1") is None
