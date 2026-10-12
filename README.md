@@ -21,33 +21,16 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
+#### Intent tools
 
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `aris_ingest_model_export` | `ARISTOOL` | Store a raw ARIS model export (bytes) as a content-addressed KG blob. |
-| `aris_ingest_models` | `ARISTOOL` | Natively ingest ARIS models into epistemic-graph as typed nodes. |
-| `aris_model` | `ARISTOOL` | Work with ARIS models and their EPC structure. |
-| `aris_object` | `ARISTOOL` | Write attributes on a single ARIS object. |
+| MCP Tool | Kind | Description |
+|----------|------|-------------|
+| `aris_ingest_model_export` | intent | Store a raw ARIS model export (bytes) as a content-addressed KG blob. |
+| `aris_ingest_models` | intent | Natively ingest ARIS models into epistemic-graph as typed nodes. |
+| `aris_model` | intent | Work with ARIS models and their EPC structure. |
+| `aris_object` | intent | Write attributes on a single ARIS object. |
 
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
-
-<details>
-<summary>7 per-operation tools — one per public API method (click to expand)</summary>
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `aris_get_model` | `ARIS_APITOOL` | Get a single model's metadata (including its attributes). |
-| `aris_list_model_attributes` | `ARIS_APITOOL` | Get a model's attributes (used for writeback idempotency read-back). |
-| `aris_list_model_connections` | `ARIS_APITOOL` | List the directed control-flow connections between a model's objects. |
-| `aris_list_model_objects` | `ARIS_APITOOL` | List the EPC objects (functions/events/rule operators) of a model. |
-| `aris_list_models` | `ARIS_APITOOL` | List models in the tenant/database (process + architecture). |
-| `aris_set_model_attributes` | `ARIS_APITOOL` | Write/update attributes on a model (e.g. the ``kg_intelligence`` blob). |
-| `aris_set_object_attributes` | `ARIS_APITOOL` | Write/update attributes on a single object. |
-
-</details>
-
-_4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 > Writes require `ARIS_ENABLE_WRITE=True`.
@@ -75,7 +58,6 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | `TRANSPORT` | `stdio` | stdio, streamable-http, or sse |
 | `HOST` | `0.0.0.0` |  |
 | `PORT` | `8000` |  |
-| `MCP_TOOL_MODE` | `condensed` | Tool surface: condensed, verbose, or both |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool / tag allow/deny lists |
 | `MCP_DISABLED_TOOLS` | — |  |
 | `MCP_ENABLED_TAGS` | — |  |
@@ -104,7 +86,7 @@ _4 action-routed tool(s) · 7 verbose 1:1 tool(s). Each is enabled unless its `<
 | `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_29 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -222,6 +204,107 @@ The slim `[mcp]` server does **not** require the database.
 aris-mcp                       # stdio (default)
 aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
+
+## MCP Configuration Examples
+
+<!-- MCP-CONFIG-EXAMPLES:START -->
+
+> **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
+> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> enables model orchestration.
+
+#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "aris-mcp[mcp]",
+        "aris-mcp"
+      ],
+      "env": {
+        "ARISTOOL": "True",
+        "ARIS_API_BASE": "http://localhost/abs/api",
+        "ARIS_ENABLE_WRITE": "False"
+      }
+    }
+  }
+}
+```
+
+Runtime references require an alias-aware launcher such as GraphOS. Other
+launchers must omit those entries and inject the resolved values through their
+own runtime secret boundary.
+
+#### Streamable-HTTP Transport (networked / production)
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "aris-mcp[mcp]",
+        "aris-mcp",
+        "--transport",
+        "streamable-http",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "TRANSPORT": "streamable-http",
+        "HOST": "127.0.0.1",
+        "PORT": "8000",
+        "ARISTOOL": "True",
+        "ARIS_API_BASE": "http://localhost/abs/api",
+        "ARIS_ENABLE_WRITE": "False"
+      }
+    }
+  }
+}
+```
+
+Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "url": "http://localhost:8000/aris-mcp/mcp"
+    }
+  }
+}
+```
+
+Run a reviewed container image as a least-privilege stdio child (no
+listener or published port):
+
+```bash
+docker run -i --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --pids-limit=256 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
+  -e TRANSPORT=stdio \
+  -e ARISTOOL=True \
+  -e ARIS_API_BASE=http://localhost/abs/api \
+  -e ARIS_ENABLE_WRITE=False \
+  registry.example.invalid/aris-mcp@sha256:<digest> aris-mcp
+```
+
+For containerized network HTTP, supply an authenticated TLS ingress (or
+direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
+CIDR policy through the operator-owned deployment profile. The generator
+does not emit an unauthenticated non-loopback listener.
+
+_Auto-generated from the code-read env surface (package vars) — do not edit._
+<!-- MCP-CONFIG-EXAMPLES:END -->
 
 ## Deployment
 
