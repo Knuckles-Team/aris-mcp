@@ -4,7 +4,7 @@ Software AG **ARIS** REST API + MCP Server + A2A Server for Agentic AI.
 
 `aris-mcp` connects the agent ecosystem to an ARIS tenant (ARIS Connect / ARIS
 Enterprise / ARIS Cloud). It is the inbound *and* outbound bridge for the
-agent-utilities Knowledge Graph's Camunda + ARIS ↔ KG integration:
+agent-connector-sdk Knowledge Graph's Camunda + ARIS ↔ KG integration:
 
 - **Inbound** — the KG ARIS extractor (`enrichment/extractors/aris.py`) consumes
   this client to lift ARIS models + their EPC structure (functions → BusinessTask,
@@ -44,7 +44,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
-| `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see agent-utilities' transport_security. |
+| `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see agent-connector-sdk' transport_security. |
 | `ARIS_TLS_PROFILE_REF` | — |  |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
@@ -72,7 +72,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
 | `EUNOMIA_REMOTE_URL` | — |  |
 
-#### Inherited agent-utilities variables (apply to every connector)
+#### Inherited agent-connector-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -86,7 +86,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -146,7 +146,7 @@ The action-routed tools can be disabled via their toggle env var (set to `false`
 ## Installation
 
 > **Install the slim `[mcp]` extra.** Install `aris-mcp[mcp]` — the MCP-server extra
-> that pulls only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`). It deliberately
+> that pulls only the FastMCP / FastAPI tooling (`agent-connector-sdk`). It deliberately
 > **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
 > `dspy`, `llama-index`, `tree-sitter`), so `uvx`/container installs are dramatically
 > smaller and faster. Use the full `[agent]` extra only when the operator need the integrated
@@ -156,8 +156,8 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `aris-mcp[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
-| `aris-mcp[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | The operator run the **integrated agent** |
+| `aris-mcp[mcp]` | Slim MCP server only (`agent-connector-sdk` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
+| `aris-mcp[agent]` | Full agent runtime (`agent-connector-sdk` — Pydantic AI + the epistemic-graph engine) | The operator run the **integrated agent** |
 | `aris-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -191,7 +191,7 @@ agent (`:1.1.0`) with a co-located `:mcp` sidecar.
 ### Knowledge-graph database (`epistemic-graph`)
 
 The **full agent** (`[agent]` / `:1.1.0`) embeds the **epistemic-graph** engine (pulled in
-transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
+transitively via `agent-connector-sdk`). For production — or to share one knowledge graph
 across multiple agents — run **epistemic-graph as its own database container** and point the
 agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
 config, and the full database architecture (with diagrams) are documented in the
@@ -210,7 +210,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
-> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
 > still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -352,24 +352,3 @@ network transport, connector ingestion, GraphOS delegation, or trace export.
 <!-- GOVERNED-CAPABILITY:END -->
 
 
-<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
-
-## Deploy with `agent-utilities-deployment`
-
-Provision this package with the consolidated **`agent-utilities-deployment`**
-workflow. It selects an installed-package, editable-source, or immutable-container
-path; records only runtime secret and TLS-profile references in `AgentConfig`; and
-runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `aris-mcp` with agent-utilities-deployment"**.
-
-| Install mode | Command |
-|------|---------|
-| Installed package | `uv tool install "aris-mcp[mcp]"`, then run `aris-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `aris-mcp` |
-| Immutable container | deploy `registry.example.invalid/aris-mcp@sha256:<digest>` through the operator-selected orchestrator |
-
-The repository embeds no deployment profile, credential value, certificate path, or
-environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
-configured secret provider.
-
-<!-- END agent-utilities-deployment -->

@@ -1,7 +1,7 @@
 """Software AG ARIS REST API wrapper.
 
 Client for the ARIS REST API (ARIS Connect / ARIS Enterprise / ARIS Cloud)
-covering the surface the agent-utilities KG ARIS extractor and the outbound
+covering the surface the agent-connector-sdk KG ARIS extractor and the outbound
 process-intelligence writeback consume:
 
 * **read** — model inventory, per-model EPC objects (functions/events/rules) and

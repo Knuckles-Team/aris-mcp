@@ -3,13 +3,13 @@
 # slim multi-stage (build in a builder, ship only /usr/local — no dev-tools/source):
 #
 #   --target agent  (DEFAULT)  installs aris-mcp[agent] = the FULL runtime
-#                              (agent-utilities[agent]: engine + pydantic-ai + dspy +
+#                              (agent-connector-sdk: engine + pydantic-ai + dspy +
 #                              skills). Because [agent] also includes [mcp], this image
 #                              can run EITHER the agent OR the mcp server. Push as the
 #                              default tags: latest / main / <version>.
 #
 #   --target mcp               installs aris-mcp[mcp]   = MCP-server tooling ONLY
-#                              (agent-utilities[mcp]: fastmcp/fastapi — NO engine,
+#                              (agent-connector-sdk: fastmcp/fastapi — NO engine,
 #                              pydantic-ai, dspy, llama-index, tree-sitter). The slim
 #                              variant. Push as the :mcp / :mcp-<version> tag.
 #
