@@ -1,6 +1,6 @@
 # aris-mcp
 
-Software AG **ARIS** REST API + MCP Server + A2A Server for Agentic AI.
+Software AG **ARIS** REST API + MCP Server for Agentic AI.
 
 `aris-mcp` connects the agent ecosystem to an ARIS tenant (ARIS Connect / ARIS
 Enterprise / ARIS Cloud). It is the inbound *and* outbound bridge for the
@@ -149,7 +149,6 @@ The action-routed tools can be disabled via their toggle env var (set to `false`
 > that pulls only the FastMCP / FastAPI tooling (`agent-connector-sdk`). It deliberately
 > **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
 > `dspy`, `llama-index`, `tree-sitter`), so `uvx`/container installs are dramatically
-> smaller and faster. Use the full `[agent]` extra only when the operator need the integrated
 > Pydantic AI agent.
 
 Pick the extra that matches what the operator want to run:
@@ -157,40 +156,32 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `aris-mcp[mcp]` | Slim MCP server only (`agent-connector-sdk` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
-| `aris-mcp[agent]` | Full agent runtime (`agent-connector-sdk` — Pydantic AI + the epistemic-graph engine) | The operator run the **integrated agent** |
 | `aris-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
 # MCP server only (recommended for tool hosting — slim deps)
 uv pip install "aris-mcp[mcp]"
 
-# Full agent runtime (Pydantic AI + epistemic-graph engine)
-uv pip install "aris-mcp[agent]"
-
 # Everything (development)
 uv pip install "aris-mcp[all]"      # or: python -m pip install "aris-mcp[all]"
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container images (`:mcp`)
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
 | `knucklessg1/aris-mcp:mcp` | `--target mcp` | `aris-mcp[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `aris-mcp` |
-| `knucklessg1/aris-mcp:1.1.0` | `--target agent` (default) | `aris-mcp[agent]` — **full** agent runtime + epistemic-graph engine | `aris-agent` |
 
 ```bash
 docker build --target mcp   -t knucklessg1/aris-mcp:mcp    docker/   # slim MCP server
-docker build --target agent -t knucklessg1/aris-mcp:1.1.0 docker/   # full agent
 ```
 
-`docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/agent.compose.yml` runs the
 agent (`:1.1.0`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-The **full agent** (`[agent]` / `:1.1.0`) embeds the **epistemic-graph** engine (pulled in
 transitively via `agent-connector-sdk`). For production — or to share one knowledge graph
 across multiple agents — run **epistemic-graph as its own database container** and point the
 agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
