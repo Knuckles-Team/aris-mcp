@@ -3,7 +3,6 @@ services:
     build: .
     environment:
       - ARIS_API_BASE
-      - ARIS_SSL_VERIFY
       - ARIS_OAUTH_URL
       - ARIS_CLIENT_ID
       - ARIS_CLIENT_SECRET

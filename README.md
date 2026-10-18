@@ -178,7 +178,7 @@ One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 docker build --target mcp   -t knucklessg1/aris-mcp:mcp    docker/   # slim MCP server
 ```
 
-agent (`:1.1.0`) with a co-located `:mcp` sidecar.
+agent (`:1.2.0`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
@@ -319,7 +319,7 @@ to just this package. Ask your agent to **"deploy `aris-mcp` with agent-os-genes
 |------|---------|
 | Bare-metal, prod (PyPI) | `uvx aris-mcp` · or `uv tool install aris-mcp` |
 | Bare-metal, dev (editable) | `uv pip install -e ".[all]"` · or `pip install -e ".[all]"` |
-| Container, prod | deploy `knucklessg1/aris-mcp:1.1.0` via docker-compose / swarm / podman / podman-compose / kubernetes |
+| Container, prod | deploy `knucklessg1/aris-mcp:1.2.0` via docker-compose / swarm / podman / podman-compose / kubernetes |
 | Container, dev (editable) | deploy `docker/compose.dev.yml` (source-mounted at `/src`; edits live on restart) |
 
 Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
