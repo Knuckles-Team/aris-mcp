@@ -144,8 +144,8 @@ schema_mappings:
 sync:
 - preset: aris-models
   server: aris-mcp
-  tool: aris_model
-  action: list
+  tool: aris_list_models
+  action: null
   records_path: ''
   id_field: guid
   title_field: name
@@ -153,14 +153,10 @@ sync:
   updated_field: lastChange
   pagination: null
   doc_type: ProcessModel
-  tool_schema_sha256: 399b66572950aedfdf318ccee6e1479962a17eb3ebf787d439c183234226918c
+  tool_schema_sha256: f7ce2988a1f26906958ad59bb15fd61aaa9f14fe88f9ea81d7d6bf207e642569
   raw:
     server: aris-mcp
-    tool: aris_model
-    action: list
-    params:
-      action: list
-      params_json: '{}'
+    tool: aris_list_models
     records_path: ''
     id_field: guid
     id_fallback_fields:
