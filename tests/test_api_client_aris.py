@@ -57,7 +57,8 @@ def test_model_objects_and_connections_paths(client: ArisApi):
     assert "http://aris.test/abs/api/models/M1/connections" in urls
 
 
-def test_set_model_attributes_puts_attributes(client: ArisApi):
+def test_set_model_attributes_puts_attributes(client: ArisApi, monkeypatch):
+    monkeypatch.setenv("ARIS_ENABLE_WRITE", "true")
     client.set_model_attributes("M1", {"kg_intelligence": "{}"})
     method, url, _params, body = client._session.calls[-1]
     assert method == "PUT"
