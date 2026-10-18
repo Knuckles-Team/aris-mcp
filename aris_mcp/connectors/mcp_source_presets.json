@@ -1,5 +1,5 @@
 {
-  "_comment": "Tier-1 mcp_tool source preset(s) for aris-mcp (AU-KG.ingest.mcp-tool-connector). Declarative server+tool+field map so the KG syncs ARIS models with no agent-utilities code. Contributed presets win over the central MCP_TOOL_PRESETS.",
+  "_comment": "Tier-1 mcp_tool source preset(s) for aris-mcp (AU-KG.ingest.mcp-tool-connector). Declarative server+tool+field map so the KG syncs ARIS models with no agent-connector-sdk code. Contributed presets win over the central MCP_TOOL_PRESETS.",
   "aris-models": {
     "server": "aris-mcp",
     "tool": "aris_model",

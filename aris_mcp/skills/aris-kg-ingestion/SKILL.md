@@ -81,5 +81,5 @@ Store a raw model export blob (bytes base64-encoded):
 ## Related
 - `aris-process-modeling` — the reads feeding ingestion.
 - `aris-process-mining` — analyze flow before/after persisting it.
-- The agent-utilities `agent-utilities-source-integration` skill covers the hub-side
+- The agent-connector-sdk `agent-connector-sdk-source-integration` skill covers the hub-side
   `source_sync` path that consumes the `aris-models` connector preset.

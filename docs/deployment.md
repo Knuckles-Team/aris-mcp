@@ -172,7 +172,6 @@ container name and publishing the agent on `:8080`:
 ```yaml
 # docker/agent.compose.yml
 services:
-  aris-agent:
     image: knucklessg1/aris-mcp:1.1.0
     container_name: aris-agent
     hostname: aris-agent
