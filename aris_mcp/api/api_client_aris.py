@@ -17,9 +17,11 @@ The defaults follow the common ARIS Connect ABS REST layout
 only the paths move.
 """
 
+import os
 from typing import Any
 
 from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.utilities import to_boolean
 
 from aris_mcp.api.api_client_base import ApiClientBase
 
@@ -82,9 +84,17 @@ class ArisApi(ApiClientBase):
             "GET", self.paths["model_attributes"].format(model_id=model_id)
         )
 
-    # ── writes (outbound enrichment; gated by ARIS_ENABLE_WRITE at the tool) ─
+    # ── writes (outbound enrichment; gated by ARIS_ENABLE_WRITE here, in the
+    # client, so every tool that reaches them - the per-operation tools
+    # included - is gated) ─
+    @staticmethod
+    def _require_write_enabled() -> None:
+        if not to_boolean(os.getenv("ARIS_ENABLE_WRITE", "False")):
+            raise PermissionError("ARIS writes are disabled (set ARIS_ENABLE_WRITE=true)")
+
     def set_model_attributes(self, model_id: str, attributes: dict[str, Any]) -> Any:
         """Write/update attributes on a model (e.g. the ``kg_intelligence`` blob)."""
+        self._require_write_enabled()
         return self.request(
             "PUT",
             self.paths["model_attributes"].format(model_id=model_id),
@@ -94,6 +104,7 @@ class ArisApi(ApiClientBase):
 
     def set_object_attributes(self, object_id: str, attributes: dict[str, Any]) -> Any:
         """Write/update attributes on a single object."""
+        self._require_write_enabled()
         return self.request(
             "PUT",
             self.paths["object_attributes"].format(object_id=object_id),
