@@ -14,7 +14,7 @@ from aris_mcp.api.api_client_aris import ArisApi
 from aris_mcp.auth import get_client
 from aris_mcp.mcp import mcp_aris
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 logger = get_logger(name="aris_mcp")
 
 
