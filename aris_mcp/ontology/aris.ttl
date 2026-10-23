@@ -15,9 +15,8 @@
 
 # --- classes (owl:Class) ---
 
-:ProcessModel a owl:Class ;
-    rdfs:label "Process Model" ;
-    rdfs:comment "An ARIS model — an EPC / value-added chain / architecture diagram identified by GUID (aris_model list/get)." .
+:ProcessModel a owl:Class .
+
 
 :EPCObject a owl:Class ;
     rdfs:label "EPC Object" ;
@@ -127,5 +126,4 @@
     rdfs:comment """Software AG ARIS process and enterprise-architecture model —
     process models (EPC/VACD/architecture), their EPC objects (functions, events, rule
     operators), directed control-flow connections, and raw model exports (blobs) —
-    federated into the agent-connector-sdk knowledge-graph hub.""" ;
-    owl:imports <http://knuckles.team/kg/enterprise> .
+    federated into the agent-connector-sdk knowledge-graph hub.""" .
