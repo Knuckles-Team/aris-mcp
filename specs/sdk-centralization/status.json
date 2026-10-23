@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "spec_id": "CONN-ARIS-MCP-SDK-CENTRALIZATION",
+  "owner_repo": "aris-mcp",
+  "delivery_state": "SPECIFIED",
+  "requirement_ids": [
+    "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001",
+    "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.1",
+    "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.2",
+    "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.3",
+    "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.4"
+  ],
+  "requirements": [
+    {
+      "id": "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001",
+      "title": "Capabilities come from the SDK (rollup)",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [
+        "c4ff2d5f4041"
+      ],
+      "verified_by": [],
+      "rollup_of": [
+        "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.1",
+        "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.2",
+        "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.3",
+        "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.4"
+      ]
+    },
+    {
+      "id": "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.1",
+      "title": "Governed client",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.2",
+      "title": "TLS profile only",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": [
+        "tests/test_auth.py:89"
+      ]
+    },
+    {
+      "id": "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.3",
+      "title": "Same behaviour",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.4",
+      "title": "SDK floor",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    }
+  ]
+}
