@@ -3,9 +3,30 @@
 from typing import Any
 from urllib.parse import urljoin
 
-import requests
+import httpx
+from agent_connector_sdk.auth.static import BearerAuth
+from agent_connector_sdk.http.client import create_http_client
+from agent_connector_sdk.http.options import HttpClientOptions
 from agent_connector_sdk.tls.profile import ResolvedTLSProfile
 from agent_connector_sdk.tls.resolve import resolve_tls_profile
+
+
+def build_http_client(
+    base_url: str,
+    tls_profile: ResolvedTLSProfile,
+    auth: httpx.Auth | None = None,
+    timeout: float = 30.0,
+) -> httpx.Client:
+    """A governed SDK client for ``base_url`` with the runtime TLS profile."""
+    return create_http_client(
+        HttpClientOptions(
+            base_url=base_url,
+            timeout=timeout,
+            tls=tls_profile,
+            auth=auth,
+            allow_plaintext=base_url.lower().startswith("http://"),
+        )
+    )
 
 
 def _resolve_request_url(base_url: str, endpoint: str) -> str:
@@ -27,7 +48,7 @@ def _build_request_headers(
     return req_headers
 
 
-def _parse_response_body(response: requests.Response) -> Any:
+def _parse_response_body(response: httpx.Response) -> Any:
     """Return parsed JSON, or a text/success fallback dict."""
     if response.status_code == 204 or not response.text.strip():
         return {"status": "success"}
@@ -42,7 +63,7 @@ def _parse_response_body(response: requests.Response) -> Any:
 
 
 class ApiClientBase:
-    """Thin ``requests.Session`` wrapper with token / basic-auth support.
+    """Thin governed ``httpx.Client`` wrapper with token / basic-auth support.
 
     ARIS speaks JSON over its REST API. Auth is either an OAuth2 bearer token
     (resolved by :mod:`aris_mcp.auth`) or HTTP basic. Callers pass an explicit
@@ -63,12 +84,12 @@ class ApiClientBase:
         self.username = username
         self.password = password
         self.tls_profile = tls_profile or resolve_tls_profile("aris")
-        self._session = self.tls_profile.configure_requests_session(requests.Session())
-
+        auth: httpx.Auth | None = None
         if token:
-            self._session.headers.update({"Authorization": f"Bearer {token}"})
+            auth = BearerAuth(token)
         elif username and password:
-            self._session.auth = (username, password)
+            auth = httpx.BasicAuth(username, password)
+        self._session = build_http_client(self.base_url, self.tls_profile, auth)
 
     def request(
         self,

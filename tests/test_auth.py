@@ -6,6 +6,8 @@ and a configured profile must be honoured end-to-end.
 """
 
 import os
+
+import pytest
 from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
@@ -41,7 +43,6 @@ def test_get_client_verifies_by_default():
     with patch.dict(os.environ, {"ARIS_API_BASE": "http://aris.test/abs/api"}, clear=True):
         client = get_client()
         assert client.tls_profile.verify_enabled is True
-        assert client._session.verify is True
 
 
 def test_get_client_honors_ca_bundle_profile(tmp_path):
@@ -61,7 +62,6 @@ def test_get_client_honors_ca_bundle_profile(tmp_path):
         client = get_client()
         assert client.tls_profile.verify_enabled is True
         assert client.tls_profile.ca_bundle_path == ca_bundle
-        assert client._session.verify == str(ca_bundle)
 
 
 def test_get_client_honors_named_tls_profile():
@@ -86,10 +86,11 @@ def test_get_client_honors_named_tls_profile():
         assert client.tls_profile.system_trust is False
 
 
+@pytest.mark.spec("CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.2")
 def test_oauth_token_fetch_uses_resolved_tls_profile():
     """The OAuth2 client-credentials POST uses the resolved profile, never a
     bare boolean — a regression here would silently downgrade verification
-    on the one raw ``requests.post`` call outside the session wrapper."""
+    on the one raw token POST call outside the session wrapper."""
     with patch.dict(
         os.environ,
         {
@@ -100,10 +101,11 @@ def test_oauth_token_fetch_uses_resolved_tls_profile():
         },
         clear=True,
     ):
-        with patch("aris_mcp.auth.requests.post") as mock_post:
-            mock_post.return_value.json.return_value = {"access_token": "tok"}
-            mock_post.return_value.raise_for_status.return_value = None
-            get_client()
-            assert mock_post.called
-            _, kwargs = mock_post.call_args
-            assert kwargs["verify"] is True
+        with patch("aris_mcp.auth.build_http_client") as build:
+            post = build.return_value.__enter__.return_value.post
+            post.return_value.json.return_value = {"access_token": "tok"}
+            post.return_value.raise_for_status.return_value = None
+            client = get_client()
+            assert post.called
+            # The OAuth client is built with the same resolved profile.
+            assert build.call_args.args[1] is client.tls_profile

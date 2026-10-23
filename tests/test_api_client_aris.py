@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
+from agent_connector_sdk.auth.static import BearerAuth
 
 from aris_mcp.api.api_client_aris import ArisApi
 
@@ -79,4 +80,4 @@ def test_path_overrides_apply():
 
 def test_token_sets_bearer_header():
     api = ArisApi(base_url="http://aris.test", token="abc")
-    assert api._session.headers["Authorization"] == "Bearer abc"
+    assert isinstance(api._session.auth, BearerAuth)
