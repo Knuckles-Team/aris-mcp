@@ -64,7 +64,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     assert res == {"nodes": 2, "edges": 1}
     assert {r.record_id for r in transport.requests[0].records} == {"a", "b"}
     assert transport.requests[0].relationships[0].relation_reference.endswith(
-        "/relations/hasObject"
+        "/hasObject"
     )
 
 
@@ -121,15 +121,15 @@ async def test_ingest_model_graph_classifies_epc_and_links_flow(ingest):
     assert records["aris:object:O3"].mapping_reference.endswith("/EPCRule")
     assert records["aris:connection:C1"].mapping_reference.endswith("/ProcessConnection")
     rel_refs = [r.relation_reference for r in transport.requests[0].relationships]
-    assert any(ref.endswith("/relations/hasObject") for ref in rel_refs)
-    assert any(ref.endswith("/relations/flowsTo") for ref in rel_refs)
-    assert any(ref.endswith("/relations/connectionSource") for ref in rel_refs)
-    assert any(ref.endswith("/relations/connectionTarget") for ref in rel_refs)
+    assert any(ref.endswith("/hasObject") for ref in rel_refs)
+    assert any(ref.endswith("/flowsTo") for ref in rel_refs)
+    assert any(ref.endswith("/connectionSource") for ref in rel_refs)
+    assert any(ref.endswith("/connectionTarget") for ref in rel_refs)
     # the flowsTo edge for the reified connection maps object->object
     flows = [
         r
         for r in transport.requests[0].relationships
-        if r.relation_reference.endswith("/relations/flowsTo")
+        if r.relation_reference.endswith("/flowsTo")
     ]
     assert any(
         r.source.record_id == "aris:object:O1" and r.target.record_id == "aris:object:O2"
