@@ -2,12 +2,13 @@
 
 import logging
 
-import requests
+import httpx
 from agent_connector_sdk.config import setting
 from agent_connector_sdk.tls.profile import ResolvedTLSProfile
 from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 from aris_mcp.api.api_client_aris import ArisApi
+from aris_mcp.api.api_client_base import build_http_client
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +30,12 @@ def _fetch_oauth_token(tls_profile: ResolvedTLSProfile) -> str | None:
     if tenant:
         data["tenant"] = tenant
     try:
-        resp = requests.post(
-            oauth_url,
-            data=data,
-            auth=(client_id, client_secret),
-            timeout=30,
-            **tls_profile.requests_kwargs(),
-        )
-        resp.raise_for_status()
-        return resp.json().get("access_token")
+        with build_http_client(oauth_url, tls_profile) as client:
+            resp = client.post(
+                oauth_url, data=data, auth=httpx.BasicAuth(client_id, client_secret)
+            )
+            resp.raise_for_status()
+            return resp.json().get("access_token")
     except Exception as exc:  # noqa: BLE001 - surfaced as "no client" upstream
         logger.warning("ARIS OAuth token fetch failed: %s", exc)
         return None
