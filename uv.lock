@@ -70,7 +70,7 @@ wheels = [
 
 [[package]]
 name = "aris-mcp"
-version = "1.3.2"
+version = "1.3.3"
 source = { editable = "." }
 dependencies = [
     { name = "agent-connector-sdk", extra = ["mcp"] },
