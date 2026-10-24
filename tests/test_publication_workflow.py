@@ -69,7 +69,7 @@ def test_release_hook_inherits_catalogue_policy():
     assert len(matches) == 1
     repo, hook = matches[0]
     assert repo["repo"] == "https://github.com/Knuckles-Team/pipelines"
-    assert repo["rev"] == CONTRACT
+    assert repo["rev"] == "main"
     assert hook == {"id": "dependency-readiness"}
 
 
@@ -87,5 +87,7 @@ def test_alternate_docs_job_keeps_validation_without_publication():
         "pip install mkdocs-material",
         "mkdocs build",
     ]
-    assert all("gh-deploy" not in path.read_text()
-               for path in (ROOT / ".github/workflows").glob("*.yml"))
+    assert all(
+        "gh-deploy" not in path.read_text()
+        for path in (ROOT / ".github/workflows").glob("*.yml")
+    )

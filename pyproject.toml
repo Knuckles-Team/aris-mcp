@@ -4,36 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aris-mcp"
-version = "1.3.4"
+version = "1.3.5"
 description = "Software AG ARIS REST API + MCP Server for Agentic AI!"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.5.4,<0.6.0",]
 [[project.authors]]
-name = "Audel Rouhi"
-email = "knucklessg1@gmail.com"
+name = "Repository Maintainers"
+email = "maintainers@knuckles.team"
 
 [project.license]
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
 test = [ "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 
 [project.scripts]
-aris-mcp = "aris_mcp.mcp_server:mcp_server"
-
-[project.entry-points."agent_connector_sdk.skill_providers"]
-aris-mcp = "aris_mcp.skills"
-
-[project.entry-points."agent_connector_sdk.ontology_providers"]
-aris-mcp = "aris_mcp.ontology"
+aris-mcp = "agent_connector_sdk.cli:serve"
 
 # The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
-aris-mcp = "aris_mcp"
+aris-mcp = "aris_mcp:connector"
 
 [tool.uv.workspace]
 members = ["."]
@@ -70,3 +62,7 @@ override-dependencies = [
 
 [tool.pipelines_hooks.ste]
 exempt = ["specs/*", "specs/**/*"]
+
+[tool.pipelines.container]
+host = "0.0.0.0"
+compose_env = ["ARIS_API_BASE", "ARIS_OAUTH_URL", "ARIS_CLIENT_ID", "ARIS_CLIENT_SECRET", "ARIS_TENANT", "ARIS_TOKEN", "ARIS_USERNAME", "ARIS_PASSWORD", "ARIS_PATHS_JSON", "ARIS_ENABLE_WRITE"]
