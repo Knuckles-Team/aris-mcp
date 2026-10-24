@@ -6,11 +6,10 @@ and a configured profile must be honoured end-to-end.
 """
 
 import os
-
-import pytest
 from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
+import pytest
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -40,7 +39,9 @@ def _self_signed_ca_pem(common_name: str) -> str:
 
 def test_get_client_verifies_by_default():
     """No TLS env vars configured -> the resolved profile still verifies."""
-    with patch.dict(os.environ, {"ARIS_API_BASE": "http://aris.test/abs/api"}, clear=True):
+    with patch.dict(
+        os.environ, {"ARIS_API_BASE": "http://aris.test/abs/api"}, clear=True
+    ):
         client = get_client()
         assert client.tls_profile.verify_enabled is True
 
@@ -54,7 +55,7 @@ def test_get_client_honors_ca_bundle_profile(tmp_path):
     with patch.dict(
         os.environ,
         {
-            "ARIS_API_BASE": "https://aris.internal/abs/api",
+            "ARIS_API_BASE": "https://aris.example/abs/api",
             "SSL_CERT_FILE": str(ca_bundle),
         },
         clear=True,
@@ -74,7 +75,7 @@ def test_get_client_honors_named_tls_profile():
     with patch.dict(
         os.environ,
         {
-            "ARIS_API_BASE": "https://aris.internal/abs/api",
+            "ARIS_API_BASE": "https://aris.example/abs/api",
             "ARIS_TLS_PROFILE": "private-pki",
             "TLS_PROFILES": catalog,
         },

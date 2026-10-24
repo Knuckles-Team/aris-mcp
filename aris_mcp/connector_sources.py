@@ -7,9 +7,6 @@ Served live as ``connector://resources``. Regenerate by editing the declarations
 from __future__ import annotations
 
 from agent_connector_sdk.ingest.live_declaration import source_meta
-from agent_connector_sdk.ingest.sources import IngestSourceDeclaration, IngestSourceSpec
-
-CONNECTOR = "aris-mcp"
 
 SOURCES = (
     source_meta(
@@ -37,75 +34,45 @@ SOURCES = (
     ),
 )
 
+SCHEMA_VERSION = 2
+
+FIELD_SETS = {
+    "fields_1": {
+        "connectionType": "xsd:string",
+        "groupPath": "xsd:string",
+        "guid": "xsd:string",
+        "modelType": "xsd:string",
+        "objectType": "xsd:string",
+    },
+}
+
 SCHEMA_MAPPINGS = {
     "EPCEvent": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "EPCObject",
     },
     "EPCFunction": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "EPCObject",
     },
     "EPCObject": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "EPCRule": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "EPCObject",
     },
     "ModelExport": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "MediaAsset",
     },
     "ProcessConnection": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Action",
     },
     "ProcessModel": {
-        "fields": {
-            "connectionType": "xsd:string",
-            "groupPath": "xsd:string",
-            "guid": "xsd:string",
-            "modelType": "xsd:string",
-            "objectType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Action",
     },
 }
@@ -147,20 +114,3 @@ RESOURCES = (
         "name": "ProcessModel",
     },
 )
-
-
-def declaration() -> IngestSourceDeclaration:
-    """The declaration the server assembles from this module."""
-    specs = []
-    for item in SOURCES:
-        for entry in item["connector_sources"]:
-            body = {k: v for k, v in entry.items() if k not in ("tool", "mapping")}
-            specs.append(IngestSourceSpec.model_validate({**body, "tools": (entry["tool"],)}))
-    return IngestSourceDeclaration.model_validate(
-        {
-            "connector": CONNECTOR,
-            "sources": specs,
-            "schema_mappings": SCHEMA_MAPPINGS,
-            "resources": RESOURCES,
-        }
-    )

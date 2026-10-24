@@ -4,7 +4,6 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "0.1.1"
 __all__: list[str] = []
 
 CORE_MODULES = ["aris_mcp.api_client"]
@@ -78,3 +77,16 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(list(globals().keys()) + __all__)
+
+
+from agent_connector_sdk.connector import Connector
+
+from aris_mcp.api.api_client_aris import ArisApi
+from aris_mcp.auth import get_client
+
+connector = Connector(
+    api=ArisApi,
+    get_client=get_client,
+    tools="aris_mcp.mcp.mcp_aris",
+    instructions="ARIS MCP Server - Software AG ARIS process/enterprise-architecture models over the ARIS REST API: model inventory, per-model EPC objects (functions/events/rule operators) and control-flow connections, attribute read, and (gated) attribute write for outbound KG enrichment.",
+)
