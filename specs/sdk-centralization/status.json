@@ -39,7 +39,7 @@
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": [
-        "tests/test_auth.py:89"
+        "tests/test_auth.py:90"
       ]
     },
     {
