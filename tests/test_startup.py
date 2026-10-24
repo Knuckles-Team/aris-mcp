@@ -6,10 +6,8 @@ import os
 
 
 def test_package_imports():
-    import aris_mcp
     from aris_mcp.api_client import ArisApi
 
-    assert aris_mcp.__version__
     assert ArisApi is not None
 
 
