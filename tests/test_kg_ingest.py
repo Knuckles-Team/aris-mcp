@@ -31,7 +31,9 @@ class _FakeTransport:
         self.requests: list[Any] = []
 
     async def source_status(self, connector: str, stream: str) -> Any:
-        return SimpleNamespace(accepted_checkpoint=None)
+        return SimpleNamespace(
+            connector=connector, stream=stream, accepted_checkpoint=None
+        )
 
     async def submit(self, request: Any) -> Any:
         self.requests.append(request)
@@ -63,8 +65,8 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     )
     assert res == {"nodes": 2, "edges": 1}
     assert {r.record_id for r in transport.requests[0].records} == {"a", "b"}
-    assert transport.requests[0].relationships[0].relation_reference.endswith(
-        "/hasObject"
+    assert (
+        transport.requests[0].relationships[0].relation_reference.endswith("/hasObject")
     )
 
 
@@ -119,7 +121,9 @@ async def test_ingest_model_graph_classifies_epc_and_links_flow(ingest):
     assert records["aris:object:O1"].mapping_reference.endswith("/EPCEvent")
     assert records["aris:object:O2"].mapping_reference.endswith("/EPCFunction")
     assert records["aris:object:O3"].mapping_reference.endswith("/EPCRule")
-    assert records["aris:connection:C1"].mapping_reference.endswith("/ProcessConnection")
+    assert records["aris:connection:C1"].mapping_reference.endswith(
+        "/ProcessConnection"
+    )
     rel_refs = [r.relation_reference for r in transport.requests[0].relationships]
     assert any(ref.endswith("/hasObject") for ref in rel_refs)
     assert any(ref.endswith("/flowsTo") for ref in rel_refs)
@@ -132,7 +136,8 @@ async def test_ingest_model_graph_classifies_epc_and_links_flow(ingest):
         if r.relation_reference.endswith("/flowsTo")
     ]
     assert any(
-        r.source.record_id == "aris:object:O1" and r.target.record_id == "aris:object:O2"
+        r.source.record_id == "aris:object:O1"
+        and r.target.record_id == "aris:object:O2"
         for r in flows
     )
 
@@ -147,7 +152,10 @@ async def test_ingest_rejects_missing_node_type_as_noop(ingest):
     # (missing the canonical ``node_type``) still reaches the SDK's own validation,
     # which this seam reports back as a clean no-op rather than propagating IngestError.
     service, transport = ingest
-    assert await ingest_entities([{"id": "a", "type": "ProcessModel"}], ingest=service) is None
+    assert (
+        await ingest_entities([{"id": "a", "type": "ProcessModel"}], ingest=service)
+        is None
+    )
     assert transport.requests == []
 
 

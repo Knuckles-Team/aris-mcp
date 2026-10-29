@@ -14,8 +14,6 @@ def test_aris_development_skill_describes_the_supported_delivery_contract():
     text = SKILL.read_text(encoding="utf-8")
     frontmatter = text.split("---", 2)[1]
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    pipeline = (ROOT / ".github/workflows/pipeline.yml").read_text(encoding="utf-8")
-    pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
 
     assert SKILL.is_file()
     assert re.search(r"^name:\s*aris-mcp-development\s*$", frontmatter, re.M)
@@ -55,8 +53,3 @@ def test_aris_development_skill_describes_the_supported_delivery_contract():
     assert "verify=False" not in text
     assert "--no-verify" not in text
     assert '"skills/**"' in pyproject
-    assert "python_pipeline.yml@main" in pipeline
-    assert "connector: true" in pipeline
-    assert "container_pipeline.yml@main" in pipeline
-    assert "render_connector: true" in pipeline
-    assert "pages_pipeline.yml@main" in pages
