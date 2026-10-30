@@ -1,7 +1,7 @@
 """Software AG ARIS REST API wrapper.
 
 Client for the ARIS REST API (ARIS Connect / ARIS Enterprise / ARIS Cloud)
-covering the surface the agent-connector-sdk KG ARIS extractor and the outbound
+covering the surface the scion-sdk KG ARIS extractor and the outbound
 process-intelligence writeback consume:
 
 * **read** — model inventory, per-model EPC objects (functions/events/rules) and
@@ -20,8 +20,8 @@ only the paths move.
 import os
 from typing import Any
 
-from agent_connector_sdk.tls.profile import ResolvedTLSProfile
-from agent_connector_sdk.utilities import to_boolean
+from scion_sdk.tls.profile import ResolvedTLSProfile
+from scion_sdk.utilities import to_boolean
 
 from aris_mcp.api.api_client_base import ApiClientBase
 
@@ -90,7 +90,9 @@ class ArisApi(ApiClientBase):
     @staticmethod
     def _require_write_enabled() -> None:
         if not to_boolean(os.getenv("ARIS_ENABLE_WRITE", "False")):
-            raise PermissionError("ARIS writes are disabled (set ARIS_ENABLE_WRITE=true)")
+            raise PermissionError(
+                "ARIS writes are disabled (set ARIS_ENABLE_WRITE=true)"
+            )
 
     def set_model_attributes(self, model_id: str, attributes: dict[str, Any]) -> Any:
         """Write/update attributes on a model (e.g. the ``kg_intelligence`` blob)."""

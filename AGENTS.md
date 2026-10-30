@@ -22,7 +22,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
 
 ## Tech Stack
 - Python 3.11+
-- agent-connector-sdk >= 0.49.0
+- scion-sdk >= 0.49.0
 - requests (ARIS REST API, OAuth2/bearer/basic)
 - Model Context Protocol (MCP) via FastMCP
 
@@ -31,7 +31,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
 - `pre-commit run --all-files`: lint
 
 ## Design notes
-- The client is a **thin** REST wrapper; all logic stays in the agent-connector-sdk KG
+- The client is a **thin** REST wrapper; all logic stays in the scion-sdk KG
   extractor/writeback. Method names (`list_models`, `list_model_objects`,
   `list_model_connections`, `set_model_attributes`) are the contract the KG
   extractor probes — keep them stable.
@@ -49,7 +49,7 @@ not silence checks to force green. Never commit secrets.
 Working in parallel with other sessions/worktrees? **Reserve a concept id before you write its `CONCEPT:` marker** so two sessions never collide:
 
 ```bash
-agent-connector-sdk --json concept reserve --ns KG-2   # or a package prefix, e.g. KEY
+scion-sdk --json concept reserve --ns KG-2   # or a package prefix, e.g. KEY
 ```
 
 Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-connector-sdk/concept_coordination/>
@@ -80,14 +80,14 @@ is what Dependabot flags. Rules:
 ## Upstream currency edict — target the newest release; a pin is a hypothesis, not a fact (READ BEFORE capping, deferring, or opt-in-gating an upgrade)
 
 This governs how this repository treat **other people's** releases, deprecations, and version caps in
-this repo (fleet-wide edict, propagated from `agent-connector-sdk/AGENTS.md`).
+this repo (fleet-wide edict, propagated from `scion-sdk/AGENTS.md`).
 
 1. **Latest by default.** Target the newest upstream release -- including a pre-release
    where the ecosystem has already moved onto it. Sitting on an old major because the
    upgrade is work is not a reason to defer it.
 2. **A conservative upstream pin is a hypothesis, not a fact -- test it, don't inherit
    it.** Upstream maintainers cap defensively (an unreleased major, an untested surface)
-   as often as they cap for a known break. Worked example (from `agent-connector-sdk`):
+   as often as they cap for a known break. Worked example (from `scion-sdk`):
    `pydantic-ai-slim` 2.18.0 declared `fastmcp-slim[client]>=3.3.0` with no upper bound;
    2.19.0 added `<4` purely as a defensive guard while fastmcp 4 was still pre-release --
    not because of an observed incompatibility. Blocking an upgrade on that kind of cap
