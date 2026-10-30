@@ -3,7 +3,7 @@
 CONCEPT:AU-KG.ingest.list-durable-media. An ARIS model can be exported as raw bytes
 (BPMN/XML/AML, an SVG/PNG diagram render, or a PDF report). When a live epistemic-graph
 engine is reachable, those bytes are stored as a content-addressed media record (a
-``MediaAsset`` on an ``agent_connector_sdk.ingest.ChangeSet``, subclassed :ModelExport
+``MediaAsset`` on an ``scion_sdk.ingest.ChangeSet``, subclassed :ModelExport
 in aris.ttl) in one commit. This makes the export itself — not just a model GUID —
 durable, deduped, and queryable inside the knowledge graph.
 
@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     IngestBinding,
     IngestError,
@@ -30,7 +30,9 @@ logger = logging.getLogger("aris_mcp.kg_media")
 
 _SOURCE = "aris-mcp"
 
-_BLOB_BINDING = IngestBinding(connector="aris-mcp", stream="aris", media_type="ModelExport")
+_BLOB_BINDING = IngestBinding(
+    connector="aris-mcp", stream="aris", media_type="ModelExport"
+)
 
 # Common ARIS export MIME types → the coarse media_type bucket carried on the asset.
 _XML_MIMES = ("application/xml", "text/xml", "application/bpmn+xml")

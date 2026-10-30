@@ -8,7 +8,7 @@ description: >-
 license: MIT
 tags: [aris, connector, mcp, sdk, development]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # ARIS MCP Development
@@ -34,7 +34,7 @@ row is `PIPE-CONNSPEC-R104.4`; use this skill together with the repository
 - `aris_mcp/skills/**` is included in the packaged connector data. A skill
   change therefore needs a package-content check before publication.
 - `pyproject.toml` exposes the `aris-mcp` console script through
-  `agent_connector_sdk.cli:serve` and registers the `aris-mcp` SDK connector
+  `scion_sdk.cli:serve` and registers the `aris-mcp` SDK connector
   entry point for `aris_mcp:connector`.
 
 ## Connection and security contract

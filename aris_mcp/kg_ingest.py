@@ -3,7 +3,7 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. This package natively pushes its
 ARIS process data into the epistemic-graph knowledge graph as **typed OWL nodes**
 (:ProcessModel, :EPCFunction, :EPCEvent, :EPCRule, :ProcessConnection) + control-flow
-links, through the shared ``agent_connector_sdk.ingest`` knowledge-ingest facade — the
+links, through the shared ``scion_sdk.ingest`` knowledge-ingest facade — the
 one connector write path; there is no self-contained fallback transaction here.
 
 Entirely best-effort: with no reachable engine, or a malformed record, every entry
@@ -11,7 +11,7 @@ point **no-ops** (returns ``None``), so the connector keeps working with zero KG
 infrastructure. Nodes match the classes federated by ``aris_mcp.ontology`` (aris.ttl).
 
 Only a thin mapper lives here (ARIS records → entity/relationship dicts); the write
-path is the shared ``agent_connector_sdk.ingest`` facade.
+path is the shared ``scion_sdk.ingest`` facade.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     Entity,
     IngestBinding,
@@ -66,9 +66,7 @@ def _to_entity(record: dict[str, Any]) -> Entity:
 
 def _to_relationship(record: dict[str, Any]) -> Relationship:
     props = {
-        k: v
-        for k, v in record.items()
-        if k not in ("source", "target", "relationship")
+        k: v for k, v in record.items() if k not in ("source", "target", "relationship")
     }
     return Relationship(
         source=record["source"],
@@ -153,12 +151,16 @@ def _model_node(model: dict[str, Any], model_id: str, mid: Any) -> dict[str, Any
         "name": _first(model, _NAME_KEYS),
         "guid": str(mid),
         "modelType": _first(model, _TYPE_KEYS),
-        "groupPath": model.get("groupPath") or model.get("group") or model.get("database"),
+        "groupPath": model.get("groupPath")
+        or model.get("group")
+        or model.get("database"),
         "externalToolId": str(mid),
     }
 
 
-def _object_entity_and_edge(obj: dict[str, Any], model_id: str) -> tuple[dict[str, Any], dict[str, Any]] | None:
+def _object_entity_and_edge(
+    obj: dict[str, Any], model_id: str
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
     oid = _first(obj, _ID_KEYS)
     if oid is None:
         return None
@@ -177,8 +179,18 @@ def _object_entity_and_edge(obj: dict[str, Any], model_id: str) -> tuple[dict[st
 
 
 def _connection_endpoints(conn: dict[str, Any]) -> tuple[Any, Any]:
-    src = conn.get("sourceObjectId") or conn.get("source") or conn.get("sourceGuid") or conn.get("from")
-    tgt = conn.get("targetObjectId") or conn.get("target") or conn.get("targetGuid") or conn.get("to")
+    src = (
+        conn.get("sourceObjectId")
+        or conn.get("source")
+        or conn.get("sourceGuid")
+        or conn.get("from")
+    )
+    tgt = (
+        conn.get("targetObjectId")
+        or conn.get("target")
+        or conn.get("targetGuid")
+        or conn.get("to")
+    )
     return src, tgt
 
 
@@ -228,7 +240,9 @@ def _connection_entities_and_edges(
         entities.append(node)
         relationships.extend(edges)
 
-    relationships.append({"source": src_id, "target": tgt_id, "relationship": "flowsTo"})
+    relationships.append(
+        {"source": src_id, "target": tgt_id, "relationship": "flowsTo"}
+    )
     return entities, relationships
 
 
@@ -261,7 +275,9 @@ async def ingest_model_graph(
             relationships.append(edge)
 
     for conn in connections or []:
-        conn_entities, conn_relationships = _connection_entities_and_edges(conn, model_id)
+        conn_entities, conn_relationships = _connection_entities_and_edges(
+            conn, model_id
+        )
         entities.extend(conn_entities)
         relationships.extend(conn_relationships)
 

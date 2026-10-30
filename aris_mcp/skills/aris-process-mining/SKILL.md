@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [aris, process-mining, epc, control-flow, analysis, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # ARIS Process Mining

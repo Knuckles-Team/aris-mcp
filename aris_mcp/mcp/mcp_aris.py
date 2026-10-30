@@ -10,9 +10,9 @@ import json
 import os
 from typing import Any
 
-from agent_connector_sdk.utilities import to_boolean
 from fastmcp import FastMCP
 from pydantic import Field
+from scion_sdk.utilities import to_boolean
 
 from aris_mcp.auth import get_client
 

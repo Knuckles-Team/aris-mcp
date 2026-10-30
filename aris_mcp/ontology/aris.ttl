@@ -126,4 +126,4 @@
     rdfs:comment """Software AG ARIS process and enterprise-architecture model —
     process models (EPC/VACD/architecture), their EPC objects (functions, events, rule
     operators), directed control-flow connections, and raw model exports (blobs) —
-    federated into the agent-connector-sdk knowledge-graph hub.""" .
+    federated into the scion-sdk knowledge-graph hub.""" .

@@ -8,7 +8,7 @@ import re
 
 import httpx
 import pytest
-from agent_connector_sdk.auth.static import BearerAuth
+from scion_sdk.auth.static import BearerAuth
 
 from aris_mcp.api.api_client_aris import ArisApi
 

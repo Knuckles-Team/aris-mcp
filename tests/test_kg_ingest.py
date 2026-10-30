@@ -2,7 +2,7 @@
 
 Exercises the real ``ingest_entities`` / ``ingest_models`` / ``ingest_model_graph``
 seam against a fake transport boundary (no engine required), letting the SDK's own
-``agent_connector_sdk.ingest`` request builder run on top of it. Unlike most fleet
+``scion_sdk.ingest`` request builder run on top of it. Unlike most fleet
 connectors, ``aris_mcp.kg_ingest`` is a **best-effort** surface (its MCP tools must
 never raise when the KG stack is down), so every entry point converts an unreachable
 engine into ``None`` rather than propagating an error — those semantics are exercised
@@ -15,7 +15,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from agent_connector_sdk.ingest import KnowledgeIngest
+from scion_sdk.ingest import KnowledgeIngest
 
 from aris_mcp.kg_ingest import (
     ingest_entities,

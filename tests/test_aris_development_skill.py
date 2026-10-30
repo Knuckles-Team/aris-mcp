@@ -41,7 +41,7 @@ def test_aris_development_skill_describes_the_supported_delivery_contract():
         "aris_object",
         "aris_ingest_models",
         "aris_ingest_model_export",
-        "agent_connector_sdk.cli:serve",
+        "scion_sdk.cli:serve",
         "aris_mcp/skills/**",
         "connector: true",
         "render_connector: true",

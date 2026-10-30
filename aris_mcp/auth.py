@@ -3,9 +3,9 @@
 import logging
 
 import httpx
-from agent_connector_sdk.config import setting
-from agent_connector_sdk.tls.profile import ResolvedTLSProfile
-from agent_connector_sdk.tls.resolve import resolve_tls_profile
+from scion_sdk.config import setting
+from scion_sdk.tls.profile import ResolvedTLSProfile
+from scion_sdk.tls.resolve import resolve_tls_profile
 
 from aris_mcp.api.api_client_aris import ArisApi
 from aris_mcp.api.api_client_base import build_http_client

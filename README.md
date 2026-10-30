@@ -4,7 +4,7 @@ Software AG **ARIS** REST API + MCP Server for Agentic AI.
 
 `aris-mcp` connects the agent ecosystem to an ARIS tenant (ARIS Connect / ARIS
 Enterprise / ARIS Cloud). It is the inbound *and* outbound bridge for the
-agent-connector-sdk Knowledge Graph's Camunda + ARIS ↔ KG integration:
+scion-sdk Knowledge Graph's Camunda + ARIS ↔ KG integration:
 
 - **Inbound** — the KG ARIS extractor (`enrichment/extractors/aris.py`) consumes
   this client to lift ARIS models + their EPC structure (functions → BusinessTask,
@@ -44,7 +44,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
-| `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see agent-connector-sdk' transport_security. |
+| `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see scion-sdk' transport_security. |
 | `ARIS_TLS_PROFILE_REF` | — |  |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
 | `ARIS_CLIENT_ID` | — |  |
@@ -72,7 +72,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
 | `EUNOMIA_REMOTE_URL` | — |  |
 
-#### Inherited agent-connector-sdk variables (apply to every connector)
+#### Inherited scion-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -86,7 +86,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
+_28 package + 9 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -146,7 +146,7 @@ The action-routed tools can be disabled via their toggle env var (set to `false`
 ## Installation
 
 > **Install the slim `[mcp]` extra.** Install `aris-mcp[mcp]` — the MCP-server extra
-> that pulls only the FastMCP / FastAPI tooling (`agent-connector-sdk`). It deliberately
+> that pulls only the FastMCP / FastAPI tooling (`scion-sdk`). It deliberately
 > **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
 > `dspy`, `llama-index`, `tree-sitter`), so `uvx`/container installs are dramatically
 > Pydantic AI agent.
@@ -155,7 +155,7 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `aris-mcp[mcp]` | Slim MCP server only (`agent-connector-sdk` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
+| `aris-mcp[mcp]` | Slim MCP server only (`scion-sdk` — FastMCP/FastAPI) | The operator only run the **MCP server** (smallest install / image) |
 | `aris-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -182,7 +182,7 @@ agent (`:1.3.1`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-transitively via `agent-connector-sdk`). For production — or to share one knowledge graph
+transitively via `scion-sdk`). For production — or to share one knowledge graph
 across multiple agents — run **epistemic-graph as its own database container** and point the
 agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
 config, and the full database architecture (with diagrams) are documented in the
@@ -201,7 +201,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
-> FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
+> FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
 > still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -341,5 +341,3 @@ and observability policy are deployment inputs and are never packaged values.
 See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
 network transport, connector ingestion, Arbora delegation, or trace export.
 <!-- GOVERNED-CAPABILITY:END -->
-
-

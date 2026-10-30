@@ -1,6 +1,6 @@
 # aris-mcp
 
-Software AG **ARIS** REST API + **MCP Server and Agent** for the agent-connector-sdk
+Software AG **ARIS** REST API + **MCP Server and Agent** for the scion-sdk
 ecosystem — process / enterprise-architecture (EPC) model inventory, per-model
 objects and connections, and attribute read/write exposed as typed, deterministic
 tools an agent can call.
