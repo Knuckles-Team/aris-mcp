@@ -38,9 +38,7 @@ def test_epc_to_canonical_equals_the_golden():
     assert canonical == GOLDEN
     assert canonical["schema"] == SCHEMA
     assert len(canonical["steps"]) == 12
-    assert canonical["digest"] == compute_digest(
-        canonical["steps"], canonical["flows"]
-    )
+    assert canonical["digest"] == compute_digest(canonical["steps"], canonical["flows"])
     kinds = [(s["kind"], s["gate"], s["label"]) for s in canonical["steps"]]
     assert kinds[:4] == [
         ("start", None, "Invoice received"),
@@ -131,7 +129,9 @@ def _lossy() -> dict:
             "ref": "timer:P2D",
         }
     )
-    flows.append({"source": "s10", "target": "s13", "condition": None, "default": False})
+    flows.append(
+        {"source": "s10", "target": "s13", "condition": None, "default": False}
+    )
     flows.append({"source": "s5", "target": "s14", "condition": None, "default": False})
     for flow in flows:
         if flow["condition"] == "Amount at most 1000":
@@ -164,7 +164,9 @@ def test_lenient_export_lists_losses_and_restores_alternation():
 @pytest.mark.spec("CONN-ARIS-MCP-R005")
 def test_cross_source_export_synthesises_events_and_lists_other_annex():
     bpmn = json.loads((FIXTURES / "invoice-approval.bpmn.canonical.json").read_text())
-    bpmn["annex"] = [{"after": "s2", "construct": "bpmn-preserved-xml", "element_id": "x"}]
+    bpmn["annex"] = [
+        {"after": "s2", "construct": "bpmn-preserved-xml", "element_id": "x"}
+    ]
     with pytest.raises(CanonicalError):
         canonical_to_epc(bpmn, strict=True)
     epc = canonical_to_epc(bpmn, strict=False)

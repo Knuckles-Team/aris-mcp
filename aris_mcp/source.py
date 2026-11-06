@@ -11,15 +11,21 @@ Resolution, first match wins:
 * ``unconfigured`` - neither is set. Every repository tool refuses
   ``ARIS_NOT_CONFIGURED``; the server still starts and ``/health`` answers.
 
-Refusals travel as a fastmcp ``ToolError`` whose message is a JSON object
-``{"code", "message", "remedy"}`` (plus ``details`` when there are any).
+A refusal is raised as :class:`ArisRefusal` (a fastmcp ``ToolError``) and
+returned by every tool (see :func:`refusals_as_results`) as an ``isError`` tool
+result whose structured content and text are the JSON object
+``{"refused": true, "code", "message", "remedy"}`` (plus ``details`` when there
+are any), so a caller never sees a typed refusal as a server crash.
 """
 
 from __future__ import annotations
 
+import functools
+import inspect
 import json
 import logging
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import cache
 from importlib import resources
@@ -27,6 +33,8 @@ from pathlib import Path
 from typing import Any
 
 from fastmcp.exceptions import ToolError
+from fastmcp.tools.base import ToolResult
+from mcp.types import TextContent
 from scion_sdk.config import setting
 from scion_sdk.utilities import to_boolean
 
@@ -51,10 +59,53 @@ class ArisRefusal(ToolError):
             remedy,
             details,
         )
-        body: dict[str, Any] = {"code": code, "message": message, "remedy": remedy}
-        if details is not None:
-            body["details"] = details
-        super().__init__(json.dumps(body, ensure_ascii=False))
+        super().__init__(json.dumps(self.body(), ensure_ascii=False))
+
+    def body(self) -> dict[str, Any]:
+        """The refusal as the JSON object a caller receives."""
+        body: dict[str, Any] = {
+            "refused": True,
+            "code": self.code,
+            "message": self.message,
+            "remedy": self.remedy,
+        }
+        if self.details is not None:
+            body["details"] = self.details
+        return body
+
+    def result(self) -> ToolResult:
+        """The refusal as an ``isError`` tool result."""
+        body = self.body()
+        text = TextContent(type="text", text=json.dumps(body, ensure_ascii=False))
+        return ToolResult(content=[text], structured_content=body, is_error=True)
+
+
+def refusals_as_results(fn: Callable[..., Any]) -> Callable[..., Any]:
+    """Return an :class:`ArisRefusal` raised by tool ``fn`` as an isError result.
+
+    Raised, a ``ToolError`` is rewritten by the server's error middleware into
+    a JSON-RPC internal error; returned as a result it reaches the caller as a
+    typed refusal.
+    """
+    if inspect.iscoroutinefunction(fn):
+
+        @functools.wraps(fn)
+        async def run_async(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return await fn(*args, **kwargs)
+            except ArisRefusal as refusal:
+                return refusal.result()
+
+        return run_async
+
+    @functools.wraps(fn)
+    def run(*args: Any, **kwargs: Any) -> Any:
+        try:
+            return fn(*args, **kwargs)
+        except ArisRefusal as refusal:
+            return refusal.result()
+
+    return run
 
 
 def not_configured() -> ArisRefusal:

@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `aris_ingest_model_graph`, `aris_ingest_model_export`.
 - `ARIS_API_BASE` has no default any more (it targeted `http://localhost/abs/api`).
   Without it and without `ARIS_REPOSITORY_DIR` the server still starts and every
-  repository tool refuses `ARIS_NOT_CONFIGURED` with a remedy. Refusals are a
-  `ToolError` whose message is the JSON object `{code, message, remedy}`.
+  repository tool refuses `ARIS_NOT_CONFIGURED` with a remedy. Refusals are
+  returned as an `isError` tool result whose structured content is
+  `{refused: true, code, message, remedy}`.
 - Ontology hard cutover: `:EPCObject`, `:EPCFunction`, `:EPCEvent`, `:EPCRule` and
   `:ProcessConnection` are gone. Pack classes are leaves of the core `:EpcFunction`,
   `:EpcRuleOperator` and `:ProcessEventType` (`:EpcHumanFunction`,

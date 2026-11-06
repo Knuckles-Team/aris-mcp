@@ -5,8 +5,8 @@ the live REST tenant, a directory of AML exports, or the bundled fixture
 repository. With no source configured a repository tool refuses
 ``ARIS_NOT_CONFIGURED``; writes to a file or fixture repository refuse
 ``ARIS_READ_ONLY_SOURCE``; live writes refuse ``ARIS_WRITE_DISABLED`` unless
-``ARIS_ENABLE_WRITE`` is set. Refusals are a ``ToolError`` whose message is the
-JSON object ``{"code", "message", "remedy"}``.
+``ARIS_ENABLE_WRITE`` is set. A refusal is returned as an ``isError`` result
+whose structured content is ``{"refused": true, "code", "message", "remedy"}``.
 
 The conversion tools (AML import/export, canonical workflow import/export) work
 on AML text without any repository.
@@ -31,6 +31,7 @@ from aris_mcp.source import (
     LIVE,
     ArisRefusal,
     get_source,
+    refusals_as_results,
     source_status,
     write_disabled,
 )
@@ -177,6 +178,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return contracts_turtle()
 
     @mcp.tool(tags={"source"}, annotations=READ)
+    @refusals_as_results
     def aris_get_source_status() -> dict[str, Any]:
         """Report where the ARIS repository comes from.
 
@@ -187,6 +189,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return source_status()
 
     @mcp.tool(tags={"model"}, annotations=READ)
+    @refusals_as_results
     def aris_list_models(
         name: Annotated[
             str | None, Field(description="Only models whose name contains this.")
@@ -205,12 +208,14 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "count": len(items), "items": items}
 
     @mcp.tool(tags={"model"}, annotations=READ)
+    @refusals_as_results
     def aris_get_model(model_id: ModelId) -> dict[str, Any]:
         """Get one model's record (guid, name, type, group path, attributes)."""
         mode, repo = get_source()
         return {"repository": mode, "model": _call(repo.get_model, model_id)}
 
     @mcp.tool(tags={"model"}, annotations=READ)
+    @refusals_as_results
     def aris_list_model_objects(model_id: ModelId) -> dict[str, Any]:
         """List the objects placed on a model: functions, events, rule operators
         and attached objects, each with its ARIS type (TypeNum) and symbol."""
@@ -219,6 +224,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "model_id": model_id, "items": items}
 
     @mcp.tool(tags={"model"}, annotations=READ)
+    @refusals_as_results
     def aris_list_model_connections(model_id: ModelId) -> dict[str, Any]:
         """List the directed connections of a model (sourceObjectId ->
         targetObjectId with the connection type)."""
@@ -227,6 +233,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "model_id": model_id, "items": items}
 
     @mcp.tool(tags={"model"}, annotations=READ)
+    @refusals_as_results
     def aris_get_model_attributes(model_id: ModelId) -> dict[str, Any]:
         """Get a model's attributes (for example AT_NAME and kg_intelligence)."""
         mode, repo = get_source()
@@ -234,6 +241,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "model_id": model_id, "attributes": result}
 
     @mcp.tool(tags={"model", "write"}, annotations=WRITE)
+    @refusals_as_results
     def aris_set_model_attributes(
         model_id: ModelId,
         attributes: Annotated[
@@ -248,6 +256,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "model_id": model_id, "result": result}
 
     @mcp.tool(tags={"object", "write"}, annotations=WRITE)
+    @refusals_as_results
     def aris_set_object_attributes(
         object_id: Annotated[str, Field(description="Object GUID.")],
         attributes: Annotated[
@@ -262,6 +271,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"repository": mode, "object_id": object_id, "result": result}
 
     @mcp.tool(tags={"model", "kg"}, annotations=INGEST)
+    @refusals_as_results
     async def aris_ingest_model_inventory(
         name: Annotated[
             str | None, Field(description="Only models whose name contains this.")
@@ -283,6 +293,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         }
 
     @mcp.tool(tags={"model", "kg"}, annotations=INGEST)
+    @refusals_as_results
     async def aris_ingest_model_graph(model_id: ModelId) -> dict[str, Any]:
         """Ingest one model with its objects (typed by their leaf ontology class)
         and its connections (reified, plus :flowsTo) into the knowledge graph."""
@@ -301,6 +312,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         }
 
     @mcp.tool(tags={"model", "kg"}, annotations=INGEST)
+    @refusals_as_results
     async def aris_ingest_model_export(
         model_id: ModelId,
         data_b64: Annotated[str, Field(description="The export bytes, base64.")],
@@ -335,6 +347,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return {"model_id": model_id, "size_bytes": len(data), "ingested": result}
 
     @mcp.tool(tags={"aml"}, annotations=INGEST)
+    @refusals_as_results
     async def aris_import_aml(
         aml_text: Annotated[
             str | None, Field(description="An ARIS AML export (XML text).")
@@ -369,12 +382,14 @@ def register_aris_tools(mcp: FastMCP) -> None:
         return out
 
     @mcp.tool(tags={"aml"}, annotations=READ)
+    @refusals_as_results
     def aris_export_aml(model_id: ModelId) -> dict[str, Any]:
         """Export one model of the current repository as AML text."""
         mode, bundle = _model_bundle(model_id)
         return {"repository": mode, "model_id": model_id, "aml": write_aml([bundle])}
 
     @mcp.tool(tags={"canonical"}, annotations=CONVERT)
+    @refusals_as_results
     def aris_export_canonical_workflow(
         model_id: Annotated[
             str | None,
@@ -411,6 +426,7 @@ def register_aris_tools(mcp: FastMCP) -> None:
             raise _canonical_refusal(exc) from exc
 
     @mcp.tool(tags={"canonical"}, annotations=CONVERT)
+    @refusals_as_results
     def aris_import_canonical_workflow(
         canonical: Annotated[
             dict[str, Any],

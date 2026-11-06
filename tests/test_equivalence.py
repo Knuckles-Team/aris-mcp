@@ -31,7 +31,9 @@ def _dag(canonical: dict) -> tuple[dict, set]:
 def test_epc_and_bpmn_give_the_same_digest_and_dag():
     [bundle] = read_aml((FIXTURES / "invoice-approval.aml").read_bytes())
     from_epc = epc_to_canonical(bundle.model, bundle.objects, bundle.connections)
-    by_hand = json.loads((FIXTURES / "invoice-approval.bpmn.canonical.json").read_text())
+    by_hand = json.loads(
+        (FIXTURES / "invoice-approval.bpmn.canonical.json").read_text()
+    )
     from_bpmn = bpmn_to_canonical((FIXTURES / "invoice-approval.bpmn").read_bytes())
     golden = json.loads((FIXTURES / "invoice-approval.canonical.json").read_text())
 

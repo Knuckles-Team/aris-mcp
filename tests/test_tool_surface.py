@@ -49,12 +49,18 @@ def test_surface_is_one_typed_tool_per_operation(served):
 def test_parameters_are_typed_and_reads_are_read_only(served):
     _, tools = served
     assert tools["aris_get_model"].parameters["required"] == ["model_id"]
-    assert tools["aris_import_canonical_workflow"].parameters["properties"]["strict"][
-        "type"
-    ] == "boolean"
-    assert tools["aris_set_model_attributes"].parameters["properties"]["attributes"][
-        "type"
-    ] == "object"
+    assert (
+        tools["aris_import_canonical_workflow"].parameters["properties"]["strict"][
+            "type"
+        ]
+        == "boolean"
+    )
+    assert (
+        tools["aris_set_model_attributes"].parameters["properties"]["attributes"][
+            "type"
+        ]
+        == "object"
+    )
     for name in ("aris_list_models", "aris_get_model", "aris_export_aml"):
         assert tools[name].annotations.read_only_hint is True, name
     assert tools["aris_set_object_attributes"].annotations.read_only_hint is False

@@ -6,8 +6,6 @@ import logging
 
 import pytest
 from fastmcp import Client
-from fastmcp.exceptions import ToolError
-from mcp.shared.exceptions import MCPError
 from scion_sdk.connector import build_server
 from starlette.testclient import TestClient
 
@@ -33,13 +31,14 @@ async def _call(name: str, args: dict | None = None):
 
 
 async def _refusal(name: str, args: dict | None = None) -> dict:
-    """The JSON refusal body. The tool raises ToolError; the SDK error middleware
-    delivers it as a JSON-RPC error whose message ends with the same body."""
+    """The typed refusal: an isError result carrying the JSON refusal body."""
     async with Client(_server()) as client:
-        with pytest.raises((ToolError, MCPError)) as raised:
-            await client.call_tool(name, args or {})
-    text = str(raised.value)
-    return json.loads(text[text.index("{") :])
+        result = await client.call_tool(name, args or {}, raise_on_error=False)
+    assert result.is_error, name
+    body = result.structured_content
+    assert body == json.loads(result.content[0].text)
+    assert body["refused"] is True
+    return body
 
 
 @pytest.mark.spec("CONN-ARIS-MCP-R001")

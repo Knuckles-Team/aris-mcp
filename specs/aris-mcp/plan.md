@@ -50,7 +50,7 @@ No unknowns. The canonical wire form, ids, digest, EPC mapping and loss rules ar
 
 ### Source resolution (R001, R006)
 
-`resolve_mode` reads `ARIS_API_BASE` and `ARIS_REPOSITORY_DIR` only. `get_source` returns the live client or a cached `FileRepository` that answers the live client's read methods from AML; writes on it refuse `ARIS_READ_ONLY_SOURCE`. `ArisRefusal` subclasses fastmcp `ToolError`, so every tool raises the same JSON body; the SDK error middleware delivers it to the client as the call's error with that body in its message.
+`resolve_mode` reads `ARIS_API_BASE` and `ARIS_REPOSITORY_DIR` only. `get_source` returns the live client or a cached `FileRepository` that answers the live client's read methods from AML; writes on it refuse `ARIS_READ_ONLY_SOURCE`. `ArisRefusal` carries the code, message and remedy; `refusals_as_results` wraps every tool so a raised refusal is returned as an `isError` tool result whose structured content (and text) is the JSON object `{refused: true, code, message, remedy, details?}` (raised, the SDK error middleware would rewrite a `ToolError` into a JSON-RPC internal error).
 
 ### AML (R002, R003)
 

@@ -35,7 +35,8 @@ Contracts: `verify-process-source`, `read-process-model`, `export-model-aml`,
 | `fixture` | `ARIS_REPOSITORY_DIR=fixture` | the bundled sample repository; responses say `"repository": "fixture"`; never business data |
 | `unconfigured` | nothing set | every repository tool refuses `ARIS_NOT_CONFIGURED` |
 
-A refusal is a tool error whose text is JSON: `{"code", "message", "remedy"}`.
+A refusal is an error result (`isError`) whose structured content is
+`{"refused": true, "code", "message", "remedy"}`.
 Act on the remedy.
 
 ## 2. Read

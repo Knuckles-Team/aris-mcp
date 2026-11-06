@@ -106,7 +106,9 @@ def number_steps(
         return (min(done, default=0), node.kind, node.gate or "", node.label, key)
 
     while remaining:
-        unnumbered = {k: sum(1 for p in preds[k] if p not in numbered) for k in remaining}
+        unnumbered = {
+            k: sum(1 for p in preds[k] if p not in numbered) for k in remaining
+        }
         fewest = min(unnumbered.values())
         pick = min((k for k in remaining if unnumbered[k] == fewest), key=sort_key)
         numbered[pick] = len(numbered) + 1
@@ -219,9 +221,7 @@ class _Epc:
     )
 
 
-def _load(
-    objects: list[dict[str, Any]], connections: list[dict[str, Any]]
-) -> _Epc:
+def _load(objects: list[dict[str, Any]], connections: list[dict[str, Any]]) -> _Epc:
     vocab = vocabulary()
     epc = _Epc(vocab, {_rid(o): o for o in objects if _rid(o)})
     for guid, obj in epc.objects.items():
@@ -680,7 +680,11 @@ def canonical_to_epc(doc: Any, *, strict: bool = False) -> dict[str, Any]:
             chain.append(event(guid, cond))
         for entry in restored.get((u, v), []):
             chain.append(event(str(entry["element_id"]), str(entry.get("label") or "")))
-        if not chain and su["kind"] in _FUNCTION_KINDS and sv["kind"] in _FUNCTION_KINDS:
+        if (
+            not chain
+            and su["kind"] in _FUNCTION_KINDS
+            and sv["kind"] in _FUNCTION_KINDS
+        ):
             chain.append(
                 event(
                     _guid_for(model_guid, "state", u, v),

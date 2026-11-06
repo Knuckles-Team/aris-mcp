@@ -7,8 +7,6 @@ from pathlib import Path
 
 import pytest
 from fastmcp import Client
-from fastmcp.exceptions import ToolError
-from mcp.shared.exceptions import MCPError
 from scion_sdk.connector import build_server
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -31,10 +29,9 @@ async def _run(name, args):
 async def _refused(name, args):
     _, mcp = build_server("aris_mcp", command_args=[])
     async with Client(mcp) as client:
-        with pytest.raises((ToolError, MCPError)) as raised:
-            await client.call_tool(name, args)
-    text = str(raised.value)
-    return json.loads(text[text.index("{") :])
+        result = await client.call_tool(name, args, raise_on_error=False)
+    assert result.is_error and result.structured_content["refused"] is True
+    return result.structured_content
 
 
 @pytest.mark.spec("CONN-ARIS-MCP-R004")

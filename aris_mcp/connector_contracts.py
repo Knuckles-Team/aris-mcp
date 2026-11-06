@@ -28,7 +28,8 @@ _NOT_CONFIGURED = Refusal(
 )
 _NOT_FOUND = Refusal("ARIS_MODEL_NOT_FOUND", "no model has the given guid")
 _API = Refusal(
-    "ARIS_API_ERROR", "the live tenant failed or rejected the call; the message names why"
+    "ARIS_API_ERROR",
+    "the live tenant failed or rejected the call; the message names why",
 )
 _READ_ONLY = Refusal(
     "ARIS_READ_ONLY_SOURCE", "the repository is a file or fixture repository"
@@ -49,7 +50,8 @@ _CANONICAL_INVALID = Refusal(
     "the document is not a medulla.process.canonical/v1 workflow or its digest is wrong",
 )
 _UNMAPPED = Refusal(
-    "PROCESS_IMPORT_UNMAPPED_ELEMENT", "a rule operator has a symbol the ontology does not map"
+    "PROCESS_IMPORT_UNMAPPED_ELEMENT",
+    "a rule operator has a symbol the ontology does not map",
 )
 
 CONTRACTS = (
@@ -117,7 +119,15 @@ CONTRACTS = (
             ToolStep(
                 "aris_export_canonical_workflow",
                 params=("model_id", "aml_text", "aml_b64"),
-                result=("schema", "steps", "flows", "digest", "source", "annex", "losses"),
+                result=(
+                    "schema",
+                    "steps",
+                    "flows",
+                    "digest",
+                    "source",
+                    "annex",
+                    "losses",
+                ),
                 refusals=(_AML_INVALID, _UNMAPPED, _NOT_CONFIGURED),
             ),
         ),

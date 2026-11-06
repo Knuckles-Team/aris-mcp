@@ -73,7 +73,9 @@ def test_skills_name_only_served_tools_and_link_to_tasks(tools):
         for tool in set(TOOL_NAME.findall(text)) - NOT_TOOLS:
             assert tool in tools, (skill.parent.name, tool)
     assert {s for link in declared.LINKS for s in link.skills} == SKILLS
-    workflow = (PACKAGE / "skills" / "aris-epc-to-canonical-workflow" / "SKILL.md").read_text()
+    workflow = (
+        PACKAGE / "skills" / "aris-epc-to-canonical-workflow" / "SKILL.md"
+    ).read_text()
     for step in ("aris_import_aml", "aris_export_canonical_workflow", "ProcessPlan"):
         assert step in workflow
 

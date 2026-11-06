@@ -48,7 +48,13 @@ def test_no_import_and_core_terms_are_only_parents():
     assert {"EpcFunction"} == set(CLASSES["EpcHumanFunction"].parents)
     assert {"EpcRuleOperator"} == set(CLASSES["EpcXorOperator"].parents)
     assert {"ProcessEventType"} == set(CLASSES["EpcEvent"].parents)
-    for retired in ("EPCObject", "EPCFunction", "EPCEvent", "EPCRule", "ProcessConnection"):
+    for retired in (
+        "EPCObject",
+        "EPCFunction",
+        "EPCEvent",
+        "EPCRule",
+        "ProcessConnection",
+    ):
         assert retired not in TTL, retired
 
 
@@ -57,7 +63,9 @@ def test_dag_node_kinds_are_the_closed_set_and_gates_are_declared():
     kinds = {c.kind for c in CLASSES.values() if c.kind}
     assert kinds <= CANONICAL_KINDS | SOURCE_ONLY_KINDS
     assert {"human", "agent", "decision", "call", "start", "end", "state"} <= kinds
-    gates = {c.name: (c.gate, c.kind, c.symbol_nums) for c in CLASSES.values() if c.gate}
+    gates = {
+        c.name: (c.gate, c.kind, c.symbol_nums) for c in CLASSES.values() if c.gate
+    }
     assert gates == {
         "EpcAndOperator": ("and", "fork", ("ST_OPR_AND_1",)),
         "EpcOrOperator": ("or", "fork", ("ST_OPR_OR_1",)),
