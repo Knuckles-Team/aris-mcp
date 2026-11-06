@@ -7,7 +7,7 @@
 - **Traceability**: `aris_mcp/api/`
 
 ### ARIS-002: FastMCP Tools Execution
-- **Description**: FastMCP wrapper exposing the action-routed `aris_model` and `aris_object` tools through stdio and HTTP channels.
+- **Description**: FastMCP tools, one typed tool per operation, over a resolved source (live tenant, AML directory or bundled fixture repository), plus EPC <-> canonical workflow conversion.
 - **Traceability**: `aris_mcp/mcp/`
 
 ### ARIS-003: Identity & Gateway Security

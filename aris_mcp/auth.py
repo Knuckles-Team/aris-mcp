@@ -45,9 +45,10 @@ def get_client() -> ArisApi:
     """Build a configured ARIS :class:`ArisApi` client from the environment.
 
     Connection:
-        ``ARIS_API_BASE`` — REST base URL (default
-        ``http://localhost/abs/api``; for ARIS Cloud this is the tenant API
-        root). TLS is resolved through the shared ``AgentConfig`` transport
+        ``ARIS_API_BASE`` — REST base URL (for ARIS Cloud the tenant API
+        root). There is no default: without it the connector serves a file or
+        fixture repository (``ARIS_REPOSITORY_DIR``) or refuses
+        ``ARIS_NOT_CONFIGURED`` (see :mod:`aris_mcp.source`). TLS is resolved through the shared ``AgentConfig`` transport
         profile: the standard ``SSL_CERT_FILE``/``SSL_CERT_DIR`` for a
         system-wide CA, or a named profile (``ARIS_TLS_PROFILE`` /
         ``ARIS_TLS_PROFILE_REF``) resolved from a ``TLS_PROFILES`` catalog for
@@ -68,7 +69,11 @@ def get_client() -> ArisApi:
     """
     import json
 
-    base_url = setting("ARIS_API_BASE", "http://localhost/abs/api")
+    base_url = (setting("ARIS_API_BASE", "") or "").strip()
+    if not base_url:
+        from aris_mcp.source import not_configured
+
+        raise not_configured()
     tls_profile = resolve_tls_profile(
         "aris",
         profile_name=setting("ARIS_TLS_PROFILE", "") or None,

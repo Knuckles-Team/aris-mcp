@@ -25,15 +25,31 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 | MCP Tool | Kind | Description |
 |----------|------|-------------|
-| `aris_ingest_model_export` | intent | Store a raw ARIS model export (bytes) as a content-addressed KG blob. |
-| `aris_ingest_models` | intent | Natively ingest ARIS models into epistemic-graph as typed nodes. |
-| `aris_model` | intent | Work with ARIS models and their EPC structure. |
-| `aris_object` | intent | Write attributes on a single ARIS object. |
+| `aris_export_aml` | intent | Export one model of the current repository as AML text. |
+| `aris_export_canonical_workflow` | intent | Convert an EPC model to the canonical workflow (medulla.process.canonical/v1). |
+| `aris_get_model` | intent | Get one model's record (guid, name, type, group path, attributes). |
+| `aris_get_model_attributes` | intent | Get a model's attributes. |
+| `aris_get_source_status` | intent | Report where the ARIS repository comes from (live, files, fixture, unconfigured). |
+| `aris_import_aml` | intent | Read an AML export into model, object and connection records; optionally ingest them. |
+| `aris_import_canonical_workflow` | intent | Convert a canonical workflow to EPC records and AML text, listing losses. |
+| `aris_ingest_model_export` | intent | Store a raw model export as a content-addressed knowledge-graph blob. |
+| `aris_ingest_model_graph` | intent | Ingest one model with typed objects and reified connections into the knowledge graph. |
+| `aris_ingest_model_inventory` | intent | Ingest the model inventory into the knowledge graph. |
+| `aris_list_model_connections` | intent | List the directed connections of a model. |
+| `aris_list_model_objects` | intent | List the objects placed on a model with TypeNum and symbol. |
+| `aris_list_models` | intent | List the models of the repository. |
+| `aris_set_model_attributes` | intent | Write attributes on a model of the live tenant (needs ARIS_ENABLE_WRITE). |
+| `aris_set_object_attributes` | intent | Write attributes on one object of the live tenant (needs ARIS_ENABLE_WRITE). |
 
-_4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
+_15 intent tool(s) · 0 operation(s). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
-> Writes require `ARIS_ENABLE_WRITE=True`.
+> Writes require a live tenant and `ARIS_ENABLE_WRITE=True`. With no
+> `ARIS_API_BASE`, `ARIS_REPOSITORY_DIR` serves a directory of AML exports
+> read-only (`fixture` serves the bundled sample repository); with neither set,
+> repository tools refuse `ARIS_NOT_CONFIGURED`. EPC models convert to and from the
+> canonical workflow (`medulla.process.canonical/v1`) the agent workflow graph is
+> built from.
 
 ## Environment Variables
 
@@ -43,7 +59,8 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root). Default follows the ARIS Connect ABS layout. |
+| `ARIS_API_BASE` | — | ARIS REST base URL (tenant API root). No default: leave empty to serve a file repository or to run unconfigured (repository tools refuse ARIS_NOT_CONFIGURED). |
+| `ARIS_REPOSITORY_DIR` | — | Read-only repository served from a directory of AML exports, used when ARIS_API_BASE is empty. "fixture" serves the bundled sample repository. |
 | `ARIS_TLS_PROFILE` | — | Named outbound TLS policy from AgentConfig (system trust store by default). Peer and hostname verification are mandatory and cannot be disabled. Point a self-signed / private-PKI tenant at its CA either with the standard SSL_CERT_FILE / SSL_CERT_DIR (applies to every service), or by naming a profile here (ARIS_TLS_PROFILE=<name>) resolved from a TLS_PROFILES / TLS_PROFILES_REF catalog (ca_bundle_path, ca_directory, client_cert_path/ client_key_path, minimum_version) — see scion-sdk' transport_security. |
 | `ARIS_TLS_PROFILE_REF` | — |  |
 | `ARIS_OAUTH_URL` | — | 1. OAuth2 client-credentials (preferred for ARIS Cloud / Connect) |
@@ -64,7 +81,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 | `MCP_DISABLED_TAGS` | — |  |
 | `DEBUG` | `False` |  |
 | `PYTHONUNBUFFERED` | `1` |  |
-| `ARISTOOL` | `True` | The action-routed ARIS tools (aris_model, aris_object) share this toggle. |
+| `ARISTOOL` | `True` | Every ARIS tool shares this toggle. |
 | `ENABLE_OTEL` | `True` |  |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | — |  |
@@ -95,7 +112,8 @@ Every variable the server reads, grouped by concern.
 ### Connection & Credentials
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | `http://localhost/abs/api` |
+| `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | _(none)_ |
+| `ARIS_REPOSITORY_DIR` | directory of AML exports served read-only when `ARIS_API_BASE` is empty; `fixture` = bundled sample repository | _(none)_ |
 | `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | named outbound TLS policy from AgentConfig; verification is mandatory | _(empty, system trust)_ |
 | `ARIS_OAUTH_URL` / `ARIS_CLIENT_ID` / `ARIS_CLIENT_SECRET` / `ARIS_TENANT` | OAuth2 client-credentials (preferred) | — |
 | `ARIS_TOKEN` | static bearer token (alt to OAuth) | — |
@@ -121,7 +139,7 @@ Every variable the server reads, grouped by concern.
 | `PYTHONUNBUFFERED` | Unbuffered stdout (recommended in containers) | `1` |
 
 ### Tool toggles
-The action-routed tools can be disabled via their toggle env var (set to `false`):
+Every tool can be disabled via the toggle env var (set to `false`):
 `ARISTOOL` (see the [Available MCP Tools](#available-mcp-tools) table above).
 
 ### Telemetry & governance
@@ -219,7 +237,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
       ],
       "env": {
         "ARISTOOL": "True",
-        "ARIS_API_BASE": "http://localhost/abs/api",
+        "ARIS_API_BASE": "https://aris.example.com/abs/api",
         "ARIS_ENABLE_WRITE": "False"
       }
     }
@@ -252,7 +270,7 @@ own runtime secret boundary.
         "HOST": "127.0.0.1",
         "PORT": "8000",
         "ARISTOOL": "True",
-        "ARIS_API_BASE": "http://localhost/abs/api",
+        "ARIS_API_BASE": "https://aris.example.com/abs/api",
         "ARIS_ENABLE_WRITE": "False"
       }
     }
@@ -284,7 +302,7 @@ docker run -i --rm \
   --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
   -e TRANSPORT=stdio \
   -e ARISTOOL=True \
-  -e ARIS_API_BASE=http://localhost/abs/api \
+  -e ARIS_API_BASE=https://aris.example.com/abs/api \
   -e ARIS_ENABLE_WRITE=False \
   registry.example.invalid/aris-mcp@sha256:<digest> aris-mcp
 ```

@@ -19,16 +19,32 @@ row is `PIPE-CONNSPEC-R104.4`; use this skill together with the repository
 
 ## Repository and runtime map
 
-- `aris_mcp/__init__.py` declares the one SDK `Connector`, including the
-  `ArisApi` client, `get_client` factory, tool registrar module, and connector
-  instructions.
+- `aris_mcp/__init__.py` declares the one SDK `Connector`: the tool registrar
+  module `aris_mcp.mcp_server`, the startup log of the resolved source mode and
+  the connector instructions.
+- `aris_mcp/source.py` resolves the source (`live` with `ARIS_API_BASE`,
+  `files` or `fixture` with `ARIS_REPOSITORY_DIR`, else `unconfigured`) and
+  defines the typed refusals (`ARIS_NOT_CONFIGURED`, `ARIS_READ_ONLY_SOURCE`,
+  `ARIS_WRITE_DISABLED`).
+- `aris_mcp/aml.py` reads and writes AML; `aris_mcp/canonical.py` converts
+  EPC to and from the canonical workflow, driven by the annotations of
+  `aris_mcp/ontology/aris.ttl` through `aris_mcp/vocabulary.py`.
 - `aris_mcp/api/api_client_aris.py` is the thin ARIS REST facade. Keep the
   stable model, object, connection, attribute, and export method contracts.
 - `aris_mcp/auth.py` builds the client from OAuth2 client credentials, a bearer
   token, or HTTP basic authentication and resolves the shared TLS profile.
-- `aris_mcp/mcp/mcp_aris.py` registers the `aris_model`, `aris_object`,
-  `aris_ingest_models`, and `aris_ingest_model_export` tools. Attribute writes
-  remain gated by `ARIS_ENABLE_WRITE`.
+- `aris_mcp/mcp/mcp_aris.py` registers one typed tool per operation
+  (`aris_get_source_status`, `aris_list_models`, `aris_get_model`,
+  `aris_list_model_objects`, `aris_list_model_connections`,
+  `aris_get_model_attributes`, `aris_set_model_attributes`,
+  `aris_set_object_attributes`, `aris_ingest_model_inventory`,
+  `aris_ingest_model_graph`, `aris_ingest_model_export`, `aris_import_aml`,
+  `aris_export_aml`, `aris_export_canonical_workflow`,
+  `aris_import_canonical_workflow`) and the `ontology://aris-mcp/contracts.ttl`
+  resource. Attribute writes remain gated by `ARIS_ENABLE_WRITE`.
+- `aris_mcp/connector_contracts.py` declares the tool-use contracts, links,
+  data locations and business roles; `aris_mcp/prompts/` holds the agent
+  definitions.
 - `aris_mcp/connector_sources.py` is the live `aris-models` source and its
   ProcessModel, EPC, connection, and model-export schema declarations.
 - `aris_mcp/skills/**` is included in the packaged connector data. A skill
@@ -39,7 +55,8 @@ row is `PIPE-CONNSPEC-R104.4`; use this skill together with the repository
 
 ## Connection and security contract
 
-`ARIS_API_BASE` selects the REST root. OAuth2 uses `ARIS_OAUTH_URL`,
+`ARIS_API_BASE` selects the REST root (no default; unset with no
+`ARIS_REPOSITORY_DIR` the connector is unconfigured). OAuth2 uses `ARIS_OAUTH_URL`,
 `ARIS_CLIENT_ID`, `ARIS_CLIENT_SECRET`, and optionally `ARIS_TENANT`; a static
 `ARIS_TOKEN` or `ARIS_USERNAME`/`ARIS_PASSWORD` is an alternative auth path.
 `ARIS_TLS_PROFILE` and `ARIS_TLS_PROFILE_REF` select the shared verified TLS
@@ -52,10 +69,10 @@ writeback gate.
 
 1. Read the owning spec row, this skill, `AGENTS.md`, and the focused tests
    before changing a connector surface.
-2. Inspect the active `Connector`, tool registrar and action maps, REST client,
+2. Inspect the active `Connector`, tool registrar, source resolution, REST client,
    authentication/TLS setup, source declarations, and package-data rules.
 3. Make the smallest connector-owned change. Preserve public tool names,
-   action names, payloads, endpoint path overrides, authentication choices,
+   payloads, endpoint path overrides, authentication choices,
    TLS verification, ontology/source identifiers, and the SDK `Connector`
    boundary.
 4. Run the directly bound tests with `uv run --locked --extra test pytest`,

@@ -2,95 +2,72 @@
 name: aris-process-modeling
 skill_type: skill
 description: >-
-  Read Software AG ARIS process models over the aris-mcp MCP server — list the
-  model inventory, fetch one model's metadata/attributes, and read its EPC
-  objects (functions/events/rule operators) and directed control-flow
-  connections. Use when the agent must inventory ARIS models, open one model by
-  GUID, or inspect a model's EPC structure. Do NOT use for ingesting models into
-  the knowledge graph (use aris-kg-ingestion) or for control-flow / bottleneck
-  analysis of a whole repository (use aris-process-mining).
+  Read ARIS EPC process models over the aris-mcp MCP server: check which
+  repository the connector serves (live tenant, AML directory, bundled fixture
+  or unconfigured), list the model inventory, fetch one model, its attributes,
+  its objects (functions, events, rule operators, attached objects) and its
+  connections, and export a model as AML. Use when the agent must inventory ARIS
+  models or inspect one model's EPC structure. Do NOT use for knowledge-graph
+  ingest (use aris-kg-ingestion), control-flow analysis (use
+  aris-process-mining) or conversion to the canonical workflow (use
+  aris-epc-to-canonical-workflow).
 license: MIT
-tags: [aris, bpm, epc, process-model, rest-api, mcp]
+tags: [aris, bpm, epc, process-model, aml, mcp]
 metadata:
   author: Knuckles-Team
-  version: '0.1.0'
+  version: '2.0.0'
 ---
-# ARIS Process Modeling
+# ARIS process modeling
 
-Domain-typed, read-first access to Software AG **ARIS** process/architecture models
-(EPC — Event-driven Process Chains) over the ARIS Connect / ARIS Enterprise / ARIS
-Cloud REST API. Prefer these tools over raw HTTP — they carry the ARIS path templates
-and return model-shaped records.
+Contracts: `verify-process-source`, `read-process-model`, `export-model-aml`,
+`enrich-model-attributes` (`ontology://aris-mcp/contracts.ttl`). Data locations:
+`process-repository`, `process-model-graph`, `model-exports`.
 
-## When to use
-- List the model inventory in a tenant/database (process + architecture models).
-- Fetch a single model's metadata + attributes by GUID.
-- Read a model's EPC objects (functions, events, rule operators).
-- Read the directed control-flow connections between a model's objects.
+## 1. Know the source first
 
-## When NOT to use
-- Pushing models into the knowledge graph → `aris-kg-ingestion`.
-- Whole-repository control-flow / bottleneck / conformance analysis →
-  `aris-process-mining`.
-- Any attribute **write** unless `ARIS_ENABLE_WRITE=True` and you were explicitly
-  asked to enrich a model (that is gated writeback, not modeling).
+`aris_get_source_status()` returns `mode`, `repository`, `model_count` and
+`writes_enabled`.
 
-## Prerequisites & environment
-Connect via the `mcp-client` skill against the **`aris-mcp`** MCP server.
+| mode | set by | behaviour |
+|---|---|---|
+| `live` | `ARIS_API_BASE` (+ OAuth, token or basic auth) | the ARIS REST tenant |
+| `files` | `ARIS_REPOSITORY_DIR=<dir of .aml exports>` | read-only, served from the exports |
+| `fixture` | `ARIS_REPOSITORY_DIR=fixture` | the bundled sample repository; responses say `"repository": "fixture"`; never business data |
+| `unconfigured` | nothing set | every repository tool refuses `ARIS_NOT_CONFIGURED` |
 
-| Variable | Required | Notes |
-|----------|----------|-------|
-| `ARIS_API_BASE` | ✅ | REST base URL (default `http://localhost/abs/api`) |
-| `ARIS_OAUTH_URL` + `ARIS_CLIENT_ID` + `ARIS_CLIENT_SECRET` | one auth path | OAuth2 client-credentials (+ optional `ARIS_TENANT`) |
-| `ARIS_TOKEN` | one auth path | static bearer token |
-| `ARIS_USERNAME` / `ARIS_PASSWORD` | one auth path | HTTP basic |
-| `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | optional | Named outbound TLS policy (verification is mandatory) |
-| `ARIS_PATHS_JSON` | optional | JSON overriding the default REST path templates per tenant |
+A refusal is an error result (`isError`) whose structured content is
+`{"refused": true, "code", "message", "remedy"}`.
+Act on the remedy.
 
-`MCP_TOOL_MODE` (`condensed`|`verbose`|`both`) selects the condensed surface (below)
-vs. the one-to-one verbose tools.
+## 2. Read
 
-## Tools & actions
-Prefer the **condensed** tool; it takes `action` + a `params_json` **JSON string**.
+1. `aris_list_models(name=..., limit=..., offset=...)`: `items` of
+   `{guid, id, name, type, groupPath, attributes}`; EPC models have type `MT_EEPC`.
+2. `aris_get_model(model_id=<guid>)`: one model record.
+3. `aris_list_model_objects(model_id=<guid>)`: `{guid, id, name, type, symbol}`.
+   `type` is the ARIS TypeNum (`OT_FUNC`, `OT_EVT`, `OT_RULE`, `OT_ORG_UNIT`,
+   `OT_APPL_SYS_TYPE`, `OT_BUSINESS_RULE`, ...); `symbol` the SymbolNum
+   (`ST_PRCS_IF` is a process interface, `ST_OPR_XOR_1`/`ST_OPR_OR_1`/
+   `ST_OPR_AND_1` the operators).
+4. `aris_list_model_connections(model_id=<guid>)`:
+   `{guid, type, sourceObjectId, targetObjectId}`. Control flow joins two
+   control objects; any other connection attaches an object to a function
+   (`CT_EXEC_1` = carried out by).
+5. `aris_get_model_attributes(model_id=<guid>)`.
+6. `aris_export_aml(model_id=<guid>)`: the model as AML text.
 
-| Condensed tool | Actions |
-|----------------|---------|
-| `aris_model` | `list`, `get`, `objects`, `connections`, `attributes` |
+The ontology `ontology://aris-mcp/aris.ttl` names the class of every TypeNum and
+SymbolNum and the canonical step kind it becomes.
 
-### Key parameters
-- `model_id` — the ARIS model **GUID**; required for `get` / `objects` / `connections`
-  / `attributes`.
-- `list` takes optional tenant-specific filter fields in `params_json`.
+## 3. Write (live tenant only, with approval)
 
-## Recipes (`params_json`)
-List the model inventory:
-```json
-{}
-```
-Get one model's metadata:
-```json
-{"model_id": "<model-guid>"}
-```
-Read a model's EPC objects (functions/events/rules):
-```json
-{"model_id": "<model-guid>"}
-```
-Read a model's control-flow connections:
-```json
-{"model_id": "<model-guid>"}
-```
-
-## Gotchas
-- `params_json` is a **string** of JSON, not an object — serialize it.
-- ARIS deployments differ (Connect ABS portal vs. the public ARIS API; on-prem vs.
-  Cloud). If reads 404, the REST path layout differs — set `ARIS_PATHS_JSON` to match
-  your tenant (keys: `models`, `model`, `model_objects`, `model_connections`,
-  `model_attributes`, `object_attributes`).
-- Records key the model/object identifier under varying spellings (`guid`, `id`,
-  `modelGuid`); read the GUID off whichever the tenant returns.
-- EPC object `type`/`symbol` classifies the node: `*event*` → event,
-  `*rule*/*operator*/AND/OR/XOR` → rule operator, otherwise a function.
+`aris_set_model_attributes(model_id, attributes={"AT_DESC": "..."})` and
+`aris_set_object_attributes(object_id, attributes={...})` write only to a live
+tenant with `ARIS_ENABLE_WRITE=true`. Otherwise they refuse
+`ARIS_WRITE_DISABLED` (live) or `ARIS_READ_ONLY_SOURCE` (files, fixture). Read
+the attributes first and report the before and after values.
 
 ## Related
-- `aris-process-mining` — control-flow / bottleneck analysis built on these reads.
-- `aris-kg-ingestion` — push these models into the knowledge graph as typed nodes.
+- `aris-process-mining`: analyse the flow these reads return.
+- `aris-kg-ingestion`: mirror models into the knowledge graph.
+- `aris-epc-to-canonical-workflow`: convert a model to the canonical workflow.

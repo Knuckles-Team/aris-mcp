@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AML>
+  <Header-Info CreateTime="09:00:00.000" CreateDate="06.11.2026" DatabaseName="Fixture" UserName="system" ArisExeVersion="10.0"/>
+  <Language LocaleId="1033" Codepage="1252"><LanguageName>English</LanguageName></Language>
+  <Database>
+    <Group Group.ID="Group.Root">
+      <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Main group</AttrValue></AttrDef>
+      <GUID>d105cd7d-3cf9-5869-9649-c77ef04c0266</GUID>
+      <Group Group.ID="Group.Proc">
+        <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Finance</AttrValue></AttrDef>
+        <GUID>054a7d09-6a50-5e77-8256-9032b76f3115</GUID>
+        <ObjDef ObjDef.ID="ObjDef.inv.1" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>30afbdb7-634d-5ab0-ab5e-22e166efc9cc</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice received</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.1" CxnDef.Type="CT_ACTIV_1" ToObjDef.IdRef="ObjDef.inv.2">
+            <GUID>7c230d9f-170f-58c2-a2b2-af3351f0ba36</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.2" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>a5df3b97-aadc-543c-a29e-4eb113f8159d</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Check invoice"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.2" CxnDef.Type="CT_CRT_1" ToObjDef.IdRef="ObjDef.inv.3">
+            <GUID>c77ab791-39c5-5e80-95c7-1e4498a8b46d</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.3" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>9ac70ca9-a483-505d-8cc4-240eab6559c3</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice checked</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.3" CxnDef.Type="CT_ACTIV_1" ToObjDef.IdRef="ObjDef.inv.4">
+            <GUID>8cd5b79f-cb27-5be5-983f-bc9774dd0c8e</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.4" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>3ef53c85-3b34-5fab-ab01-3d33830d4579</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Determine approval level</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.4" CxnDef.Type="CT_LEADS_TO_1" ToObjDef.IdRef="ObjDef.inv.5">
+            <GUID>b39c8164-6f16-5d58-a402-891dc0424e3a</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.5" TypeNum="OT_RULE" SymbolNum="ST_OPR_XOR_1">
+          <GUID>39310605-e56a-50e6-9d79-c9ff2158034e</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue=""/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.5" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.6">
+            <GUID>18dd85be-98f2-536f-9f0d-21404166e365</GUID>
+          </CxnDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.6" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.7">
+            <GUID>ecebd884-7b84-5fcc-922b-264bede07e60</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.6" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>5b12e781-ccfd-5ec2-b899-70de5bc5d2b8</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Amount at most 1000</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.7" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.10">
+            <GUID>565a1f5f-fc6b-5e6b-8e7e-b8372cfdbc4b</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.7" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>3f668138-3429-51bc-933a-54b5de1b9bd9</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Amount above 1000</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.8" CxnDef.Type="CT_ACTIV_1" ToObjDef.IdRef="ObjDef.inv.8">
+            <GUID>79064348-a308-5bfe-a7db-30346f2f5b34</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.8" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>7731ce37-772d-5118-90c6-44bb79b4a359</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Approve invoice"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.9" CxnDef.Type="CT_CRT_1" ToObjDef.IdRef="ObjDef.inv.9">
+            <GUID>d00292e0-4553-5b7c-97a5-b51f0ca589c8</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.9" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>b6616be9-c283-5799-98d5-aba7f386a0c6</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice approved</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.10" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.10">
+            <GUID>6d0e6e8b-b577-5b63-8b86-186d3c830a73</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.10" TypeNum="OT_RULE" SymbolNum="ST_OPR_XOR_1">
+          <GUID>ffb98794-56bd-578a-a218-692338dce18b</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.11" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.11">
+            <GUID>33ea9430-530b-57e8-b775-c7d0c4259472</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.11" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>2d65215d-1ad1-5139-a696-ae258f100aed</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Post invoice"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.12" CxnDef.Type="CT_CRT_1" ToObjDef.IdRef="ObjDef.inv.12">
+            <GUID>c82f1ca6-d5c7-5186-8b55-96daf0600ccb</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.12" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>67a8a8fa-8cf8-5dae-a6c3-808a308f498d</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice posted</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.13" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.13">
+            <GUID>d7db10fa-5bae-5c15-a76a-81386e3f994f</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.13" TypeNum="OT_RULE" SymbolNum="ST_OPR_AND_1">
+          <GUID>9f7b41d6-7519-5c9b-b32f-6c5f517b8731</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.14" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.14">
+            <GUID>10bad0bd-9b10-544e-946c-4385e26ce038</GUID>
+          </CxnDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.15" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.15">
+            <GUID>e5f594c8-855a-5310-84c3-abef93bfae41</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.14" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>a8e7379b-984a-5793-8d5f-57e609a997d8</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Notify supplier"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.16" CxnDef.Type="CT_CRT_1" ToObjDef.IdRef="ObjDef.inv.16">
+            <GUID>63fa0d3c-8425-5ad4-a0e5-2ebfe0fbb42e</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.15" TypeNum="OT_FUNC" SymbolNum="ST_FUNC">
+          <GUID>18625a1b-af0a-5805-bf40-98c981915e82</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Archive invoice</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.17" CxnDef.Type="CT_CRT_1" ToObjDef.IdRef="ObjDef.inv.17">
+            <GUID>33ec9915-a6dd-569f-9fe3-84c8b9e3e30c</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.16" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>4c85f072-a0ce-5243-b258-1ea6894bda03</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Supplier notified</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.18" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.18">
+            <GUID>bae92b5e-d1e9-515f-ba4e-5bc2f9017d29</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.17" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>dd19aab3-9a94-538f-8012-b884bbccafdf</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Invoice archived"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.19" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.18">
+            <GUID>8401f3f1-7e75-5dad-b7d8-feacd70ec96e</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.18" TypeNum="OT_RULE" SymbolNum="ST_OPR_AND_1">
+          <GUID>d9103c7f-5f8a-5261-a169-8f6787be19ce</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.20" CxnDef.Type="CT_LNK_2" ToObjDef.IdRef="ObjDef.inv.19">
+            <GUID>6763b027-3ce3-596a-97f9-570d02fd4650</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.19" TypeNum="OT_EVT" SymbolNum="ST_EV">
+          <GUID>ed2d9f77-0cd1-576d-bdbb-8613e1d66824</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice processed</AttrValue></AttrDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.20" TypeNum="OT_ORG_UNIT" SymbolNum="ST_ORG_UNIT_2">
+          <GUID>82630448-ff2d-58b8-af47-292b57339bdf</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="Accounts payable"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.21" CxnDef.Type="CT_EXEC_1" ToObjDef.IdRef="ObjDef.inv.2">
+            <GUID>02d68a5d-68b8-567f-a37c-05c6c4529933</GUID>
+          </CxnDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.22" CxnDef.Type="CT_EXEC_1" ToObjDef.IdRef="ObjDef.inv.11">
+            <GUID>929b6c3f-d597-5d0c-8ebf-63fa2e6766ed</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.21" TypeNum="OT_POS" SymbolNum="ST_POS">
+          <GUID>dccac75e-fd4c-5447-9684-dae60f627dac</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Finance manager</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.23" CxnDef.Type="CT_EXEC_1" ToObjDef.IdRef="ObjDef.inv.8">
+            <GUID>e683ff5c-37ae-59ff-b386-a7f9540f2a99</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.22" TypeNum="OT_APPL_SYS_TYPE" SymbolNum="ST_APPL_SYS_TYPE">
+          <GUID>5e58c1f0-8266-5d2c-a8c1-b83332f66e4a</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">ERP system</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.24" CxnDef.Type="CT_CAN_SUPP_1" ToObjDef.IdRef="ObjDef.inv.11">
+            <GUID>26a142ad-c063-5ee3-a673-faadb7b96c71</GUID>
+          </CxnDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.25" CxnDef.Type="CT_CAN_SUPP_1" ToObjDef.IdRef="ObjDef.inv.14">
+            <GUID>977fc28b-b36a-5a3a-8e60-9e7835029d75</GUID>
+          </CxnDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.26" CxnDef.Type="CT_CAN_SUPP_1" ToObjDef.IdRef="ObjDef.inv.15">
+            <GUID>660fdb2a-7c58-5020-95c6-5d6f1a15e579</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.23" TypeNum="OT_BUSINESS_RULE" SymbolNum="ST_BUSINESS_RULE">
+          <GUID>e1e3d3ec-b621-5105-b2f5-b5863dd35d8c</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033"><StyledElement><StyledElement><PlainText TextValue="approval-level"/></StyledElement></StyledElement></AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.27" CxnDef.Type="CT_IS_ASSIGN_1" ToObjDef.IdRef="ObjDef.inv.4">
+            <GUID>db04352c-a7c7-50a7-a7d8-99498d1864db</GUID>
+          </CxnDef>
+        </ObjDef>
+        <ObjDef ObjDef.ID="ObjDef.inv.24" TypeNum="OT_INFO_CARR" SymbolNum="ST_DOC">
+          <GUID>2d09a26a-1027-53db-8141-a91995104368</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice</AttrValue></AttrDef>
+          <CxnDef CxnDef.ID="CxnDef.inv.28" CxnDef.Type="CT_IS_INP_FOR" ToObjDef.IdRef="ObjDef.inv.2">
+            <GUID>0d50e9e9-2e7d-582d-b9c7-a2ec351087ea</GUID>
+          </CxnDef>
+        </ObjDef>
+        <Model Model.ID="Model.inv" Model.Type="MT_EEPC">
+          <GUID>5e0c0a11-0000-4000-8000-000000000001</GUID>
+          <AttrDef AttrDef.Type="AT_NAME"><AttrValue LocaleId="1033">Invoice approval</AttrValue></AttrDef>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.1" ObjDef.IdRef="ObjDef.inv.1" SymbolNum="ST_EV">
+            <Position Pos.X="200" Pos.Y="100"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.1" CxnDef.IdRef="CxnDef.inv.1" ToObjOcc.IdRef="ObjOcc.inv.2"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.2" ObjDef.IdRef="ObjDef.inv.2" SymbolNum="ST_FUNC">
+            <Position Pos.X="350" Pos.Y="220"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.2" CxnDef.IdRef="CxnDef.inv.2" ToObjOcc.IdRef="ObjOcc.inv.3"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.3" ObjDef.IdRef="ObjDef.inv.3" SymbolNum="ST_EV">
+            <Position Pos.X="500" Pos.Y="340"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.3" CxnDef.IdRef="CxnDef.inv.3" ToObjOcc.IdRef="ObjOcc.inv.4"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.4" ObjDef.IdRef="ObjDef.inv.4" SymbolNum="ST_FUNC">
+            <Position Pos.X="650" Pos.Y="460"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.4" CxnDef.IdRef="CxnDef.inv.4" ToObjOcc.IdRef="ObjOcc.inv.5"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.5" ObjDef.IdRef="ObjDef.inv.5" SymbolNum="ST_OPR_XOR_1">
+            <Position Pos.X="200" Pos.Y="580"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.5" CxnDef.IdRef="CxnDef.inv.5" ToObjOcc.IdRef="ObjOcc.inv.6"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.6" CxnDef.IdRef="CxnDef.inv.6" ToObjOcc.IdRef="ObjOcc.inv.7"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.6" ObjDef.IdRef="ObjDef.inv.6" SymbolNum="ST_EV">
+            <Position Pos.X="350" Pos.Y="700"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.7" CxnDef.IdRef="CxnDef.inv.7" ToObjOcc.IdRef="ObjOcc.inv.10"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.7" ObjDef.IdRef="ObjDef.inv.7" SymbolNum="ST_EV">
+            <Position Pos.X="500" Pos.Y="820"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.8" CxnDef.IdRef="CxnDef.inv.8" ToObjOcc.IdRef="ObjOcc.inv.8"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.8" ObjDef.IdRef="ObjDef.inv.8" SymbolNum="ST_FUNC">
+            <Position Pos.X="650" Pos.Y="940"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.9" CxnDef.IdRef="CxnDef.inv.9" ToObjOcc.IdRef="ObjOcc.inv.9"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.9" ObjDef.IdRef="ObjDef.inv.9" SymbolNum="ST_EV">
+            <Position Pos.X="200" Pos.Y="1060"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.10" CxnDef.IdRef="CxnDef.inv.10" ToObjOcc.IdRef="ObjOcc.inv.10"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.10" ObjDef.IdRef="ObjDef.inv.10" SymbolNum="ST_OPR_XOR_1">
+            <Position Pos.X="350" Pos.Y="1180"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.11" CxnDef.IdRef="CxnDef.inv.11" ToObjOcc.IdRef="ObjOcc.inv.11"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.11" ObjDef.IdRef="ObjDef.inv.11" SymbolNum="ST_FUNC">
+            <Position Pos.X="500" Pos.Y="1300"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.12" CxnDef.IdRef="CxnDef.inv.12" ToObjOcc.IdRef="ObjOcc.inv.12"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.12" ObjDef.IdRef="ObjDef.inv.12" SymbolNum="ST_EV">
+            <Position Pos.X="650" Pos.Y="1420"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.13" CxnDef.IdRef="CxnDef.inv.13" ToObjOcc.IdRef="ObjOcc.inv.13"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.13" ObjDef.IdRef="ObjDef.inv.13" SymbolNum="ST_OPR_AND_1">
+            <Position Pos.X="200" Pos.Y="1540"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.14" CxnDef.IdRef="CxnDef.inv.14" ToObjOcc.IdRef="ObjOcc.inv.14"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.15" CxnDef.IdRef="CxnDef.inv.15" ToObjOcc.IdRef="ObjOcc.inv.15"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.14" ObjDef.IdRef="ObjDef.inv.14" SymbolNum="ST_FUNC">
+            <Position Pos.X="350" Pos.Y="1660"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.16" CxnDef.IdRef="CxnDef.inv.16" ToObjOcc.IdRef="ObjOcc.inv.16"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.15" ObjDef.IdRef="ObjDef.inv.15" SymbolNum="ST_FUNC">
+            <Position Pos.X="500" Pos.Y="1780"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.17" CxnDef.IdRef="CxnDef.inv.17" ToObjOcc.IdRef="ObjOcc.inv.17"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.16" ObjDef.IdRef="ObjDef.inv.16" SymbolNum="ST_EV">
+            <Position Pos.X="650" Pos.Y="1900"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.18" CxnDef.IdRef="CxnDef.inv.18" ToObjOcc.IdRef="ObjOcc.inv.18"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.17" ObjDef.IdRef="ObjDef.inv.17" SymbolNum="ST_EV">
+            <Position Pos.X="200" Pos.Y="2020"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.19" CxnDef.IdRef="CxnDef.inv.19" ToObjOcc.IdRef="ObjOcc.inv.18"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.18" ObjDef.IdRef="ObjDef.inv.18" SymbolNum="ST_OPR_AND_1">
+            <Position Pos.X="350" Pos.Y="2140"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.20" CxnDef.IdRef="CxnDef.inv.20" ToObjOcc.IdRef="ObjOcc.inv.19"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.19" ObjDef.IdRef="ObjDef.inv.19" SymbolNum="ST_EV">
+            <Position Pos.X="500" Pos.Y="2260"/><Size Size.dX="120" Size.dY="60"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.20" ObjDef.IdRef="ObjDef.inv.20" SymbolNum="ST_ORG_UNIT_2">
+            <Position Pos.X="650" Pos.Y="2380"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.21" CxnDef.IdRef="CxnDef.inv.21" ToObjOcc.IdRef="ObjOcc.inv.2"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.22" CxnDef.IdRef="CxnDef.inv.22" ToObjOcc.IdRef="ObjOcc.inv.11"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.21" ObjDef.IdRef="ObjDef.inv.21" SymbolNum="ST_POS">
+            <Position Pos.X="200" Pos.Y="2500"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.23" CxnDef.IdRef="CxnDef.inv.23" ToObjOcc.IdRef="ObjOcc.inv.8"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.22" ObjDef.IdRef="ObjDef.inv.22" SymbolNum="ST_APPL_SYS_TYPE">
+            <Position Pos.X="350" Pos.Y="2620"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.24" CxnDef.IdRef="CxnDef.inv.24" ToObjOcc.IdRef="ObjOcc.inv.11"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.25" CxnDef.IdRef="CxnDef.inv.25" ToObjOcc.IdRef="ObjOcc.inv.14"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.26" CxnDef.IdRef="CxnDef.inv.26" ToObjOcc.IdRef="ObjOcc.inv.15"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.23" ObjDef.IdRef="ObjDef.inv.23" SymbolNum="ST_BUSINESS_RULE">
+            <Position Pos.X="500" Pos.Y="2740"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.27" CxnDef.IdRef="CxnDef.inv.27" ToObjOcc.IdRef="ObjOcc.inv.4"/>
+          </ObjOcc>
+          <ObjOcc ObjOcc.ID="ObjOcc.inv.24" ObjDef.IdRef="ObjDef.inv.24" SymbolNum="ST_DOC">
+            <Position Pos.X="650" Pos.Y="2860"/><Size Size.dX="120" Size.dY="60"/>
+            <CxnOcc CxnOcc.ID="CxnOcc.inv.28" CxnDef.IdRef="CxnDef.inv.28" ToObjOcc.IdRef="ObjOcc.inv.2"/>
+          </ObjOcc>
+        </Model>
+      </Group>
+    </Group>
+  </Database>
+</AML>

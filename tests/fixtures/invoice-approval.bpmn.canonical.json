@@ -1,0 +1,203 @@
+{
+  "schema": "medulla.process.canonical/v1",
+  "name": "Invoice approval",
+  "steps": [
+    {
+      "id": "s1",
+      "kind": "start",
+      "gate": null,
+      "label": "Invoice received",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s2",
+      "kind": "human",
+      "gate": null,
+      "label": "Check invoice",
+      "role": "Accounts payable",
+      "ref": null
+    },
+    {
+      "id": "s3",
+      "kind": "decision",
+      "gate": null,
+      "label": "Determine approval level",
+      "role": null,
+      "ref": "approval-level"
+    },
+    {
+      "id": "s4",
+      "kind": "branch",
+      "gate": "xor",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s5",
+      "kind": "human",
+      "gate": null,
+      "label": "Approve invoice",
+      "role": "Finance manager",
+      "ref": null
+    },
+    {
+      "id": "s6",
+      "kind": "join",
+      "gate": "xor",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s7",
+      "kind": "agent",
+      "gate": null,
+      "label": "Post invoice",
+      "role": "Accounts payable",
+      "ref": null
+    },
+    {
+      "id": "s8",
+      "kind": "fork",
+      "gate": "and",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s9",
+      "kind": "agent",
+      "gate": null,
+      "label": "Archive invoice",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s10",
+      "kind": "agent",
+      "gate": null,
+      "label": "Notify supplier",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s11",
+      "kind": "join",
+      "gate": "and",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s12",
+      "kind": "end",
+      "gate": null,
+      "label": "Invoice processed",
+      "role": null,
+      "ref": null
+    }
+  ],
+  "flows": [
+    {
+      "source": "s1",
+      "target": "s2",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s2",
+      "target": "s3",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s3",
+      "target": "s4",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s4",
+      "target": "s5",
+      "condition": "Amount above 1000",
+      "default": false
+    },
+    {
+      "source": "s4",
+      "target": "s6",
+      "condition": "Amount at most 1000",
+      "default": false
+    },
+    {
+      "source": "s5",
+      "target": "s6",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s6",
+      "target": "s7",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s7",
+      "target": "s8",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s8",
+      "target": "s9",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s8",
+      "target": "s10",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s9",
+      "target": "s11",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s10",
+      "target": "s11",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s11",
+      "target": "s12",
+      "condition": null,
+      "default": false
+    }
+  ],
+  "digest": "c76e0f7b42192fe86f4512240d14e9f49eb97ccce8ea593ac58da8d5a196e8c2",
+  "source": {
+    "system": "bpmn20",
+    "model_id": "invoice-approval",
+    "elements": {
+      "s1": "invoice-received",
+      "s2": "check-invoice",
+      "s3": "determine-approval-level",
+      "s4": "approval-split",
+      "s5": "approve-invoice",
+      "s6": "approval-merge",
+      "s7": "post-invoice",
+      "s8": "completion-fork",
+      "s9": "archive-invoice",
+      "s10": "notify-supplier",
+      "s11": "completion-join",
+      "s12": "invoice-processed"
+    }
+  },
+  "annex": [],
+  "losses": []
+}

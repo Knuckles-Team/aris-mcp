@@ -12,5 +12,6 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 
 ## Local specifications
 
+- [`CONN-ARIS-MCP`](aris-mcp/spec.md) — Process source, AML and the canonical workflow.
 - [`CONN-ARIS-MCP-CONNECTOR-CONTENT`](connector-content/spec.md) — The connector serves its packaged content.
 - [`CONN-ARIS-MCP-SDK-CENTRALIZATION`](sdk-centralization/spec.md) — Capabilities through the SDK.

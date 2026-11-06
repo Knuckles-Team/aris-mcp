@@ -6,4 +6,4 @@ Entities, classes and tables this spec adds, one section per row.
 
 Row title: Declare access contracts for the competency reads of aris-mcp.
 
-Definition from the row: Entities: entity `epc_function` (class EPCFunction, key `id`, columns modelId, name); entity `connection` (class EPC flow, key `id`, columns sourceId, targetId).
+Definition from the row: Entities: entity `epc_function` (class EpcFunction, key `id`, columns modelId, name); entity `connection` (class EpcConnection, key `id`, columns sourceId, targetId).

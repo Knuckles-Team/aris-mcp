@@ -8,7 +8,7 @@
       ],
       "env": {
         "ARISTOOL": "True",
-        "ARIS_API_BASE": "http://localhost/abs/api",
+        "ARIS_API_BASE": "https://aris.example.com/abs/api",
         "ARIS_ENABLE_WRITE": "False"
       }
     }
