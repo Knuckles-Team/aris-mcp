@@ -4,7 +4,8 @@ Each business task is the ordered tool calls a proven workflow uses: check the
 source, read a process model, convert an EPC to the canonical workflow and back,
 export AML, ingest into the graph, and enrich a model. Every served tool is
 called by a contract step and named by a link. Served as
-``ontology://aris-mcp/contracts.ttl``.
+``ontology://aris-mcp/contracts.ttl``. Values are literals so the surface
+check can read the declarations without importing the module.
 """
 
 # ruff: noqa: E501
@@ -18,9 +19,6 @@ from aris_mcp._surface import (
     ToolStep,
     ToolUseContract,
 )
-
-OPERATOR = "aris-process-operator"
-MODELER = "aris-process-modeler"
 
 _NOT_CONFIGURED = Refusal(
     "ARIS_NOT_CONFIGURED",
@@ -211,7 +209,7 @@ LINKS = (
     SurfaceLink(
         "verify-process-source",
         tools=("aris_get_source_status", "aris_list_models"),
-        prompts=(OPERATOR,),
+        prompts=("aris-process-operator",),
         skills=("aris-process-modeling", "aris-mcp-development"),
     ),
     SurfaceLink(
@@ -223,25 +221,25 @@ LINKS = (
             "aris_list_model_connections",
             "aris_get_model_attributes",
         ),
-        prompts=(OPERATOR, MODELER),
+        prompts=("aris-process-operator", "aris-process-modeler"),
         skills=("aris-process-modeling", "aris-process-mining"),
     ),
     SurfaceLink(
         "convert-epc-to-canonical-workflow",
         tools=("aris_import_aml", "aris_export_canonical_workflow"),
-        prompts=(MODELER, OPERATOR),
+        prompts=("aris-process-modeler", "aris-process-operator"),
         skills=("aris-epc-to-canonical-workflow",),
     ),
     SurfaceLink(
         "convert-canonical-to-epc",
         tools=("aris_import_canonical_workflow",),
-        prompts=(MODELER,),
+        prompts=("aris-process-modeler",),
         skills=("aris-epc-to-canonical-workflow",),
     ),
     SurfaceLink(
         "export-model-aml",
         tools=("aris_export_aml",),
-        prompts=(MODELER, OPERATOR),
+        prompts=("aris-process-modeler", "aris-process-operator"),
         skills=("aris-process-modeling",),
     ),
     SurfaceLink(
@@ -251,7 +249,7 @@ LINKS = (
             "aris_ingest_model_graph",
             "aris_ingest_model_export",
         ),
-        prompts=(OPERATOR,),
+        prompts=("aris-process-operator",),
         skills=("aris-kg-ingestion",),
     ),
     SurfaceLink(
@@ -261,18 +259,17 @@ LINKS = (
             "aris_set_model_attributes",
             "aris_set_object_attributes",
         ),
-        prompts=(OPERATOR,),
+        prompts=("aris-process-operator",),
         skills=("aris-process-modeling",),
     ),
 )
 
-_REPOSITORY = "ARIS_API_BASE tenant, else the ARIS_REPOSITORY_DIR AML directory or the bundled fixture repository"
 
 LOCATIONS = (
     DataLocation(
         "process-repository",
         ("EpcModel", "ProcessModel"),
-        _REPOSITORY,
+        "ARIS_API_BASE tenant, else the ARIS_REPOSITORY_DIR AML directory or the bundled fixture repository",
         "aris_list_models",
         store="repository",
         route_param="model_id",
@@ -294,7 +291,7 @@ LOCATIONS = (
             "EpcAttachment",
             "EpcConnection",
         ),
-        _REPOSITORY,
+        "ARIS_API_BASE tenant, else the ARIS_REPOSITORY_DIR AML directory or the bundled fixture repository",
         "aris_list_model_objects",
         store="repository",
         route_param="model_id",
@@ -312,7 +309,7 @@ LOCATIONS = (
     DataLocation(
         "model-exports",
         ("AmlDocument", "ModelExport"),
-        _REPOSITORY,
+        "ARIS_API_BASE tenant, else the ARIS_REPOSITORY_DIR AML directory or the bundled fixture repository",
         "aris_export_aml",
         store="repository",
         route_param="model_id",
