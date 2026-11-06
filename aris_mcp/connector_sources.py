@@ -12,11 +12,11 @@ SOURCES = (
     source_meta(
         tool="aris_list_models",
         source_id="aris-models",
-        record_type="ProcessModel",
+        record_type="EpcModel",
         id_field="guid",
         cursor_field="lastChange",
         preset={
-            "doc_type": "ProcessModel",
+            "doc_type": "EpcModel",
             "domain": "aris",
             "id_fallback_fields": [
                 "id",
@@ -27,7 +27,7 @@ SOURCES = (
             "params_style": "args",
             "type_field": "type",
         },
-        records_path="",
+        records_path="items",
         server="aris-mcp",
         text_field="name",
         title_field="name",
@@ -42,75 +42,48 @@ FIELD_SETS = {
         "groupPath": "xsd:string",
         "guid": "xsd:string",
         "modelType": "xsd:string",
+        "symbolType": "xsd:string",
         "objectType": "xsd:string",
     },
 }
 
-SCHEMA_MAPPINGS = {
-    "EPCEvent": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "EPCObject",
-    },
-    "EPCFunction": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "EPCObject",
-    },
-    "EPCObject": {
-        "field_sets": ["fields_1"],
-        "ontology_class": None,
-    },
-    "EPCRule": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "EPCObject",
-    },
-    "ModelExport": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "MediaAsset",
-    },
-    "ProcessConnection": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "Action",
-    },
-    "ProcessModel": {
-        "field_sets": ["fields_1"],
-        "ontology_class": "Action",
-    },
+_LEAVES = {
+    "EpcHumanFunction": "EpcFunction",
+    "EpcAutomatedFunction": "EpcFunction",
+    "EpcDecisionFunction": "EpcFunction",
+    "EpcProcessInterface": "EpcFunction",
+    "EpcStartEvent": "EpcEvent",
+    "EpcEndEvent": "EpcEvent",
+    "EpcIntermediateEvent": "EpcEvent",
+    "EpcAndOperator": "EpcRuleOperator",
+    "EpcOrOperator": "EpcRuleOperator",
+    "EpcXorOperator": "EpcRuleOperator",
+    "EpcEvent": "ProcessEventType",
+    "EpcOrganizationalElement": "EpcAttachment",
+    "EpcApplicationSystem": "EpcAttachment",
+    "EpcBusinessRule": "EpcAttachment",
+    "EpcDataObject": "EpcAttachment",
+    "EpcDocument": "EpcAttachment",
+    "EpcAttachment": "Concept",
+    "EpcConnection": "Concept",
+    "EpcModel": "ProcessModel",
+    "ModelExport": "MediaAsset",
 }
 
-RESOURCES = (
-    {
-        "id_prefix": "epcevent",
-        "label": "EPC Event",
-        "name": "EPCEvent",
-    },
-    {
-        "id_prefix": "epcfunction",
-        "label": "EPC Function",
-        "name": "EPCFunction",
-    },
-    {
-        "id_prefix": "epcobject",
-        "label": "EPC Object",
-        "name": "EPCObject",
-    },
-    {
-        "id_prefix": "epcrule",
-        "label": "EPC Rule",
-        "name": "EPCRule",
-    },
-    {
-        "id_prefix": "modelexport",
-        "label": "Model Export",
-        "name": "ModelExport",
-    },
-    {
-        "id_prefix": "processconnection",
-        "label": "Process Connection",
-        "name": "ProcessConnection",
-    },
-    {
-        "id_prefix": "processmodel",
-        "label": "Process Model",
-        "name": "ProcessModel",
-    },
+SCHEMA_MAPPINGS = {
+    name: {"field_sets": ["fields_1"], "ontology_class": parent}
+    for name, parent in _LEAVES.items()
+}
+
+
+def _label(name: str) -> str:
+    out = ""
+    for ch in name:
+        out += f" {ch}" if ch.isupper() and out else ch
+    return out.replace("Epc", "EPC")
+
+
+RESOURCES = tuple(
+    {"id_prefix": name.lower(), "label": _label(name), "name": name}
+    for name in sorted(_LEAVES)
 )

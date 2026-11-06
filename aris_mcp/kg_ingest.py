@@ -1,9 +1,11 @@
-"""Native epistemic-graph ingestion for ARIS records (typed graph nodes).
+"""Native knowledge-graph ingestion for ARIS records (typed graph nodes).
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. This package natively pushes its
-ARIS process data into the epistemic-graph knowledge graph as **typed OWL nodes**
-(:ProcessModel, :EPCFunction, :EPCEvent, :EPCRule, :ProcessConnection) + control-flow
-links, through the shared ``scion_sdk.ingest`` knowledge-ingest facade — the
+ARIS process data into the knowledge graph as **typed OWL nodes** of the leaf
+classes of ``aris.ttl`` (:EpcModel; :EpcHumanFunction / :EpcAutomatedFunction /
+:EpcDecisionFunction / :EpcProcessInterface; :EpcStartEvent / :EpcEndEvent /
+:EpcIntermediateEvent; :EpcAndOperator / :EpcOrOperator / :EpcXorOperator; the
+attachment classes; a reified :EpcConnection per connection) + control-flow links, through the shared ``scion_sdk.ingest`` knowledge-ingest facade — the
 one connector write path; there is no self-contained fallback transaction here.
 
 Entirely best-effort: with no reachable engine, or a malformed record, every entry
@@ -43,10 +45,6 @@ _ID_KEYS = ("guid", "id", "objectGuid", "modelGuid", "ID")
 _NAME_KEYS = ("name", "Name", "label", "title")
 _TYPE_KEYS = ("type", "typeName", "symbolType", "symbolName", "objectType", "modelType")
 
-# ARIS symbol/type substrings → the EPC object subclass to tag.
-_EVENT_HINTS = ("event",)
-_RULE_HINTS = ("rule", "operator", "connector", "and", "or", "xor")
-
 
 def _first(rec: dict[str, Any], keys: tuple[str, ...]) -> Any:
     for k in keys:
@@ -82,7 +80,7 @@ async def ingest_entities(
     *,
     ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int] | None:
-    """Write typed OWL nodes (+ edges) into epistemic-graph. Best-effort, never raises.
+    """Write typed OWL nodes (+ edges) into the knowledge graph. Best-effort, never raises.
 
     ``entities``: ``[{"id":..., "node_type":<owl:Class>, ...props}]``.
     ``relationships``: ``[{"source":id, "target":id, "relationship":<link>}]``.
@@ -107,14 +105,11 @@ async def ingest_entities(
 
 
 # ── ARIS-specific mappers ──────────────────────────────────────────────────
-def _epc_class(obj_type: Any) -> str:
-    """Classify an ARIS object's symbol/type string into an EPC subclass."""
-    t = str(obj_type or "").lower()
-    if any(h in t for h in _EVENT_HINTS):
-        return "EPCEvent"
-    if any(h in t for h in _RULE_HINTS):
-        return "EPCRule"
-    return "EPCFunction"
+def _model_class(model: dict[str, Any]) -> str:
+    from aris_mcp.vocabulary import vocabulary
+
+    epc_types = vocabulary().classes["EpcModel"].type_nums
+    return "EpcModel" if model.get("type") in epc_types else "ProcessModel"
 
 
 async def ingest_models(
@@ -131,7 +126,7 @@ async def ingest_models(
         entities.append(
             {
                 "id": f"aris:model:{mid}",
-                "node_type": "ProcessModel",
+                "node_type": _model_class(model),
                 "name": _first(model, _NAME_KEYS),
                 "guid": str(mid),
                 "modelType": _first(model, _TYPE_KEYS),
@@ -147,7 +142,7 @@ async def ingest_models(
 def _model_node(model: dict[str, Any], model_id: str, mid: Any) -> dict[str, Any]:
     return {
         "id": model_id,
-        "node_type": "ProcessModel",
+        "node_type": _model_class(model),
         "name": _first(model, _NAME_KEYS),
         "guid": str(mid),
         "modelType": _first(model, _TYPE_KEYS),
@@ -159,7 +154,7 @@ def _model_node(model: dict[str, Any], model_id: str, mid: Any) -> dict[str, Any
 
 
 def _object_entity_and_edge(
-    obj: dict[str, Any], model_id: str
+    obj: dict[str, Any], model_id: str, classes: dict[str, str]
 ) -> tuple[dict[str, Any], dict[str, Any]] | None:
     oid = _first(obj, _ID_KEYS)
     if oid is None:
@@ -168,10 +163,11 @@ def _object_entity_and_edge(
     node_id = f"aris:object:{oid}"
     node = {
         "id": node_id,
-        "node_type": _epc_class(obj_type),
+        "node_type": classes.get(str(oid), "EpcAttachment"),
         "name": _first(obj, _NAME_KEYS),
         "guid": str(oid),
         "objectType": obj_type,
+        "symbolType": obj.get("symbol") or obj.get("symbolNum"),
         "externalToolId": str(oid),
     }
     edge = {"source": model_id, "target": node_id, "relationship": "hasObject"}
@@ -196,17 +192,18 @@ def _connection_endpoints(conn: dict[str, Any]) -> tuple[Any, Any]:
 
 def _reified_connection_entities(
     conn: dict[str, Any], model_id: str, src_id: str, tgt_id: str
-) -> tuple[dict[str, Any], list[dict[str, Any]]] | None:
-    """When `conn` carries its own id, emit a :ProcessConnection node plus
-    its hasConnection/connectionSource/connectionTarget edges. Returns None
-    if `conn` has no id (the reification is skipped, only :flowsTo remains)."""
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Emit the reified :EpcConnection node plus its hasConnection /
+    connectionSource / connectionTarget edges. A connection without its own id
+    gets one derived from the model, its endpoints and its type."""
     cid = _first(conn, _ID_KEYS)
     if cid is None:
-        return None
+        ctype = _first(conn, _TYPE_KEYS) or "cxn"
+        cid = f"{model_id.removeprefix('aris:model:')}:{src_id.removeprefix('aris:object:')}:{tgt_id.removeprefix('aris:object:')}:{ctype}"
     conn_id = f"aris:connection:{cid}"
     node = {
         "id": conn_id,
-        "node_type": "ProcessConnection",
+        "node_type": "EpcConnection",
         "guid": str(cid),
         "connectionType": _first(conn, _TYPE_KEYS),
         "externalToolId": str(cid),
@@ -223,7 +220,7 @@ def _connection_entities_and_edges(
     conn: dict[str, Any], model_id: str
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Map one connection into its entities + relationships (:flowsTo, plus
-    an optional reified :ProcessConnection). Returns ([], []) if unusable
+    the reified :EpcConnection). Returns ([], []) if unusable
     (missing source/target)."""
     src, tgt = _connection_endpoints(conn)
     if src is None or tgt is None:
@@ -234,11 +231,9 @@ def _connection_entities_and_edges(
     entities: list[dict[str, Any]] = []
     relationships: list[dict[str, Any]] = []
 
-    reified = _reified_connection_entities(conn, model_id, src_id, tgt_id)
-    if reified is not None:
-        node, edges = reified
-        entities.append(node)
-        relationships.extend(edges)
+    node, edges = _reified_connection_entities(conn, model_id, src_id, tgt_id)
+    entities.append(node)
+    relationships.extend(edges)
 
     relationships.append(
         {"source": src_id, "target": tgt_id, "relationship": "flowsTo"}
@@ -255,10 +250,13 @@ async def ingest_model_graph(
 ) -> dict[str, int] | None:
     """Map one model + its EPC objects + control-flow connections into the KG.
 
-    Emits the :ProcessModel, each object as its :EPCFunction/:EPCEvent/:EPCRule
-    subclass with a :hasObject link, and each connection as :flowsTo edges (+ a
-    reified :ProcessConnection node when it carries its own guid/type).
+    Emits the model, each object as its leaf class of ``aris.ttl`` (typed by
+    TypeNum/SymbolNum first, the type-name hints only as a fallback) with a
+    :hasObject link, and each connection as a reified :EpcConnection node plus a
+    :flowsTo edge.
     """
+    from aris_mcp.canonical import classify_epc_objects
+
     mid = _first(model or {}, _ID_KEYS)
     if mid is None:
         return None
@@ -267,8 +265,9 @@ async def ingest_model_graph(
     entities: list[dict[str, Any]] = [_model_node(model, model_id, mid)]
     relationships: list[dict[str, Any]] = []
 
+    classes = classify_epc_objects(list(objects or []), list(connections or []))
     for obj in objects or []:
-        pair = _object_entity_and_edge(obj, model_id)
+        pair = _object_entity_and_edge(obj, model_id, classes)
         if pair is not None:
             node, edge = pair
             entities.append(node)

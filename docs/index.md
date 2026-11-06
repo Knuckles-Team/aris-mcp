@@ -22,9 +22,10 @@ REST API with typed, deterministic MCP tools and a Pydantic AI agent. It provide
 - **`ArisApi`** — a granular `requests`-based REST facade covering model inventory,
   per-model EPC objects (functions / events / rule operators), control-flow
   connections, and attribute read/write surfaces of the ARIS API.
-- **A FastMCP tool surface** registering the action-routed `aris_model` and
-  `aris_object` tools (model inventory, EPC structure, attribute read, and gated
-  attribute write).
+- **A FastMCP tool surface** with one typed tool per operation: model inventory,
+  EPC structure, attribute read and gated write, AML import/export, conversion
+  between EPC and the canonical workflow, and knowledge-graph ingest, over a live
+  tenant, a directory of AML exports or the bundled fixture repository.
 - **A Pydantic AI agent** (`aris-agent`) that drives the MCP tools for autonomous
   ARIS process-model exploration and Knowledge-Graph enrichment.
 

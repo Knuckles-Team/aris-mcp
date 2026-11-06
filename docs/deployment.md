@@ -106,7 +106,8 @@ curl -s http://localhost:8000/health        # {"status":"OK"}
 
 | Var | Default | Meaning |
 |---|---|---|
-| `ARIS_API_BASE` | `http://localhost/abs/api` | ARIS REST base URL (tenant API root) |
+| `ARIS_API_BASE` | _(none)_ | ARIS REST base URL (tenant API root) |
+| `ARIS_REPOSITORY_DIR` | _(none)_ | Directory of AML exports served read-only when `ARIS_API_BASE` is empty; `fixture` = bundled sample repository |
 | `ARIS_TOKEN` | _(empty)_ | Static bearer token (alt to OAuth / basic) |
 | `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | _(empty)_ | Named outbound TLS policy from AgentConfig (system trust by default); verification is mandatory and cannot be disabled |
 | `ARIS_ENABLE_WRITE` | `False` | Allow gated attribute writeback |

@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aris-mcp"
-version = "1.3.8"
+version = "2.0.0"
 description = "Software AG ARIS REST API + MCP Server for Agentic AI!"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "scion-sdk[mcp]>=0.6.4,<0.7.0",]
+dependencies = [ "scion-sdk[mcp]>=0.8.2,<0.9.0", "defusedxml>=0.7.1,<1",]
 [[project.authors]]
 name = "Repository Maintainers"
 email = "maintainers@knuckles.team"
@@ -46,7 +46,7 @@ check_untyped_defs = true
 dev = [ "pytest-timeout>=2.4.0",]
 
 [tool.setuptools.package-data]
-aris_mcp = [ "mcp_config.json", "prompts/**", "skills/**", "ontology/**", "connectors/**",]
+aris_mcp = [ "mcp_config.json", "prompts/**", "skills/**", "ontology/**", "connectors/**", "fixtures/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]
@@ -65,4 +65,7 @@ exempt = ["specs/*", "specs/**/*"]
 
 [tool.pipelines.container]
 host = "0.0.0.0"
-compose_env = ["ARIS_API_BASE", "ARIS_OAUTH_URL", "ARIS_CLIENT_ID", "ARIS_CLIENT_SECRET", "ARIS_TENANT", "ARIS_TOKEN", "ARIS_USERNAME", "ARIS_PASSWORD", "ARIS_PATHS_JSON", "ARIS_ENABLE_WRITE"]
+compose_env = ["ARIS_API_BASE", "ARIS_REPOSITORY_DIR", "ARIS_OAUTH_URL", "ARIS_CLIENT_ID", "ARIS_CLIENT_SECRET", "ARIS_TENANT", "ARIS_TOKEN", "ARIS_USERNAME", "ARIS_PASSWORD", "ARIS_PATHS_JSON", "ARIS_ENABLE_WRITE"]
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"

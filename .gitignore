@@ -14,3 +14,6 @@ docker/debug.Dockerfile
 docker/*.compose.yml
 aris_mcp/ontology/shapes/connector.shacl.ttl
 aris_mcp/ontology/certification.json
+
+# Spec status is computed, never committed.
+specs/**/status.json

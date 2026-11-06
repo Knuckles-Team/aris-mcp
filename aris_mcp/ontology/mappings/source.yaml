@@ -4,15 +4,14 @@ ontology_source: aris
 sync:
 - preset: aris-models
   server: aris-mcp
-  tool: aris_model
-  action: list
-  records_path: ''
+  tool: aris_list_models
+  records_path: items
   id_field: guid
   title_field: name
   text_field: name
   updated_field: lastChange
-  doc_type: ProcessModel
-  tool_schema_sha256: 399b66572950aedfdf318ccee6e1479962a17eb3ebf787d439c183234226918c
+  doc_type: EpcModel
+  tool_schema_sha256: 963ff3ff98ac5116e258566a5cdfe394cbd6a1e557f92dce143d03592a28a36c
 governance:
   default_acl: quarantine
   identity: opaque-reference

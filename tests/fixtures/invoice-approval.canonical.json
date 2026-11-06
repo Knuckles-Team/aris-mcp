@@ -1,0 +1,253 @@
+{
+  "schema": "medulla.process.canonical/v1",
+  "name": "Invoice approval",
+  "steps": [
+    {
+      "id": "s1",
+      "kind": "start",
+      "gate": null,
+      "label": "Invoice received",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s2",
+      "kind": "human",
+      "gate": null,
+      "label": "Check invoice",
+      "role": "Accounts payable",
+      "ref": null
+    },
+    {
+      "id": "s3",
+      "kind": "decision",
+      "gate": null,
+      "label": "Determine approval level",
+      "role": null,
+      "ref": "approval-level"
+    },
+    {
+      "id": "s4",
+      "kind": "branch",
+      "gate": "xor",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s5",
+      "kind": "human",
+      "gate": null,
+      "label": "Approve invoice",
+      "role": "Finance manager",
+      "ref": null
+    },
+    {
+      "id": "s6",
+      "kind": "join",
+      "gate": "xor",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s7",
+      "kind": "agent",
+      "gate": null,
+      "label": "Post invoice",
+      "role": "Accounts payable",
+      "ref": null
+    },
+    {
+      "id": "s8",
+      "kind": "fork",
+      "gate": "and",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s9",
+      "kind": "agent",
+      "gate": null,
+      "label": "Archive invoice",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s10",
+      "kind": "agent",
+      "gate": null,
+      "label": "Notify supplier",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s11",
+      "kind": "join",
+      "gate": "and",
+      "label": "",
+      "role": null,
+      "ref": null
+    },
+    {
+      "id": "s12",
+      "kind": "end",
+      "gate": null,
+      "label": "Invoice processed",
+      "role": null,
+      "ref": null
+    }
+  ],
+  "flows": [
+    {
+      "source": "s1",
+      "target": "s2",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s2",
+      "target": "s3",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s3",
+      "target": "s4",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s4",
+      "target": "s5",
+      "condition": "Amount above 1000",
+      "default": false
+    },
+    {
+      "source": "s4",
+      "target": "s6",
+      "condition": "Amount at most 1000",
+      "default": false
+    },
+    {
+      "source": "s5",
+      "target": "s6",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s6",
+      "target": "s7",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s7",
+      "target": "s8",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s8",
+      "target": "s9",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s8",
+      "target": "s10",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s9",
+      "target": "s11",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s10",
+      "target": "s11",
+      "condition": null,
+      "default": false
+    },
+    {
+      "source": "s11",
+      "target": "s12",
+      "condition": null,
+      "default": false
+    }
+  ],
+  "digest": "c76e0f7b42192fe86f4512240d14e9f49eb97ccce8ea593ac58da8d5a196e8c2",
+  "source": {
+    "system": "aris",
+    "model_id": "5e0c0a11-0000-4000-8000-000000000001",
+    "elements": {
+      "s9": "18625a1b-af0a-5805-bf40-98c981915e82",
+      "s7": "2d65215d-1ad1-5139-a696-ae258f100aed",
+      "s1": "30afbdb7-634d-5ab0-ab5e-22e166efc9cc",
+      "s4": "39310605-e56a-50e6-9d79-c9ff2158034e",
+      "s3": "3ef53c85-3b34-5fab-ab01-3d33830d4579",
+      "s5": "7731ce37-772d-5118-90c6-44bb79b4a359",
+      "s8": "9f7b41d6-7519-5c9b-b32f-6c5f517b8731",
+      "s2": "a5df3b97-aadc-543c-a29e-4eb113f8159d",
+      "s10": "a8e7379b-984a-5793-8d5f-57e609a997d8",
+      "s11": "d9103c7f-5f8a-5261-a169-8f6787be19ce",
+      "s12": "ed2d9f77-0cd1-576d-bdbb-8613e1d66824",
+      "s6": "ffb98794-56bd-578a-a218-692338dce18b"
+    }
+  },
+  "annex": [
+    {
+      "after": "s2",
+      "before": "s3",
+      "construct": "epc-state-event",
+      "element_id": "9ac70ca9-a483-505d-8cc4-240eab6559c3",
+      "label": "Invoice checked"
+    },
+    {
+      "after": "s4",
+      "before": "s5",
+      "construct": "epc-condition-event",
+      "element_id": "3f668138-3429-51bc-933a-54b5de1b9bd9",
+      "label": "Amount above 1000"
+    },
+    {
+      "after": "s4",
+      "before": "s6",
+      "construct": "epc-condition-event",
+      "element_id": "5b12e781-ccfd-5ec2-b899-70de5bc5d2b8",
+      "label": "Amount at most 1000"
+    },
+    {
+      "after": "s5",
+      "before": "s6",
+      "construct": "epc-state-event",
+      "element_id": "b6616be9-c283-5799-98d5-aba7f386a0c6",
+      "label": "Invoice approved"
+    },
+    {
+      "after": "s7",
+      "before": "s8",
+      "construct": "epc-state-event",
+      "element_id": "67a8a8fa-8cf8-5dae-a6c3-808a308f498d",
+      "label": "Invoice posted"
+    },
+    {
+      "after": "s9",
+      "before": "s11",
+      "construct": "epc-state-event",
+      "element_id": "dd19aab3-9a94-538f-8012-b884bbccafdf",
+      "label": "Invoice archived"
+    },
+    {
+      "after": "s10",
+      "before": "s11",
+      "construct": "epc-state-event",
+      "element_id": "4c85f072-a0ce-5243-b258-1ea6894bda03",
+      "label": "Supplier notified"
+    }
+  ],
+  "losses": []
+}

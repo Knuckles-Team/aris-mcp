@@ -81,12 +81,18 @@ def __dir__() -> list[str]:
 
 from scion_sdk.connector import Connector
 
-from aris_mcp.api.api_client_aris import ArisApi
-from aris_mcp.auth import get_client
+from aris_mcp.source import log_resolved_mode
 
 connector = Connector(
-    api=ArisApi,
-    get_client=get_client,
-    tools="aris_mcp.mcp.mcp_aris",
-    instructions="ARIS MCP Server - Software AG ARIS process/enterprise-architecture models over the ARIS REST API: model inventory, per-model EPC objects (functions/events/rule operators) and control-flow connections, attribute read, and (gated) attribute write for outbound KG enrichment.",
+    tools="aris_mcp.mcp_server",
+    extra_registrations=(log_resolved_mode,),
+    instructions=(
+        "ARIS MCP Server - ARIS EPC process models from a live tenant "
+        "(ARIS_API_BASE), a directory of AML exports or the bundled fixture "
+        "repository (ARIS_REPOSITORY_DIR): model inventory, objects, connections "
+        "and attributes, gated attribute writes, AML import/export, conversion "
+        "between EPC and the canonical workflow (medulla.process.canonical/v1), "
+        "and knowledge-graph ingest. Unconfigured, repository tools refuse "
+        "ARIS_NOT_CONFIGURED; aris_get_source_status reports the mode."
+    ),
 )

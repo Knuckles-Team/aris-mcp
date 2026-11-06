@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:operaton="http://operaton.org/schema/1.0/bpmn"
+                  id="invoice-approval-definitions"
+                  targetNamespace="https://knuckles.team/fixtures/process-equivalence">
+  <bpmn:collaboration id="invoice-approval-collaboration">
+    <bpmn:participant id="invoice-approval-participant" name="Invoice approval" processRef="invoice-approval" />
+  </bpmn:collaboration>
+  <bpmn:process id="invoice-approval" name="Invoice approval" isExecutable="true" operaton:historyTimeToLive="P30D">
+    <bpmn:laneSet id="invoice-approval-lanes">
+      <bpmn:lane id="lane-accounts-payable" name="Accounts payable">
+        <bpmn:flowNodeRef>check-invoice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>post-invoice</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane-finance-manager" name="Finance manager">
+        <bpmn:flowNodeRef>approve-invoice</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="invoice-received" name="Invoice received" />
+    <bpmn:userTask id="check-invoice" name="Check invoice" />
+    <bpmn:businessRuleTask id="determine-approval-level" name="Determine approval level" operaton:decisionRef="approval-level" />
+    <bpmn:exclusiveGateway id="approval-split" />
+    <bpmn:userTask id="approve-invoice" name="Approve invoice" />
+    <bpmn:exclusiveGateway id="approval-merge" />
+    <bpmn:serviceTask id="post-invoice" name="Post invoice" operaton:type="external" operaton:topic="erp-post-invoice" />
+    <bpmn:parallelGateway id="completion-fork" />
+    <bpmn:serviceTask id="notify-supplier" name="Notify supplier" operaton:type="external" operaton:topic="notify-supplier" />
+    <bpmn:serviceTask id="archive-invoice" name="Archive invoice" operaton:type="external" operaton:topic="archive-invoice" />
+    <bpmn:parallelGateway id="completion-join" />
+    <bpmn:endEvent id="invoice-processed" name="Invoice processed" />
+    <bpmn:sequenceFlow id="f1" sourceRef="invoice-received" targetRef="check-invoice" />
+    <bpmn:sequenceFlow id="f2" sourceRef="check-invoice" targetRef="determine-approval-level" />
+    <bpmn:sequenceFlow id="f3" sourceRef="determine-approval-level" targetRef="approval-split" />
+    <bpmn:sequenceFlow id="f4" name="Amount at most 1000" sourceRef="approval-split" targetRef="approval-merge" />
+    <bpmn:sequenceFlow id="f5" name="Amount above 1000" sourceRef="approval-split" targetRef="approve-invoice" />
+    <bpmn:sequenceFlow id="f6" sourceRef="approve-invoice" targetRef="approval-merge" />
+    <bpmn:sequenceFlow id="f7" sourceRef="approval-merge" targetRef="post-invoice" />
+    <bpmn:sequenceFlow id="f8" sourceRef="post-invoice" targetRef="completion-fork" />
+    <bpmn:sequenceFlow id="f9" sourceRef="completion-fork" targetRef="notify-supplier" />
+    <bpmn:sequenceFlow id="f10" sourceRef="completion-fork" targetRef="archive-invoice" />
+    <bpmn:sequenceFlow id="f11" sourceRef="notify-supplier" targetRef="completion-join" />
+    <bpmn:sequenceFlow id="f12" sourceRef="archive-invoice" targetRef="completion-join" />
+    <bpmn:sequenceFlow id="f13" sourceRef="completion-join" targetRef="invoice-processed" />
+  </bpmn:process>
+</bpmn:definitions>

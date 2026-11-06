@@ -20,7 +20,8 @@ common ARIS Connect ABS REST layout.
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | `http://localhost/abs/api` |
+| `ARIS_API_BASE` | ARIS REST base URL (tenant API root) | _(none)_ |
+| `ARIS_REPOSITORY_DIR` | Directory of AML exports served read-only when `ARIS_API_BASE` is empty; `fixture` = bundled sample repository | _(none)_ |
 | `ARIS_TLS_PROFILE` / `ARIS_TLS_PROFILE_REF` | Named outbound TLS policy from AgentConfig (system trust by default); verification is mandatory | _(empty)_ |
 | `ARIS_PATHS_JSON` | JSON overriding REST path templates per tenant | — |
 

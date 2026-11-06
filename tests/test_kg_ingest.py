@@ -58,7 +58,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     res = await ingest_entities(
         [
             {"id": "a", "node_type": "ProcessModel", "name": "p"},
-            {"id": "b", "node_type": "EPCFunction"},
+            {"id": "b", "node_type": "EpcAutomatedFunction"},
         ],
         [{"source": "a", "target": "b", "relationship": "hasObject"}],
         ingest=service,
@@ -115,15 +115,15 @@ async def test_ingest_model_graph_classifies_epc_and_links_flow(ingest):
         {"sourceObjectId": "O2", "targetObjectId": "O3"},
     ]
     res = await ingest_model_graph(model, objects, connections, ingest=service)
-    # nodes: model + 3 objects + 1 reified connection = 5
-    assert res["nodes"] == 5
+    # nodes: model + 3 objects + 2 reified connections (one with a derived id) = 6
+    assert res["nodes"] == 6
     records = {r.record_id: r for r in transport.requests[0].records}
-    assert records["aris:object:O1"].mapping_reference.endswith("/EPCEvent")
-    assert records["aris:object:O2"].mapping_reference.endswith("/EPCFunction")
-    assert records["aris:object:O3"].mapping_reference.endswith("/EPCRule")
-    assert records["aris:connection:C1"].mapping_reference.endswith(
-        "/ProcessConnection"
-    )
+    # no TypeNum: the type-name hints are the fallback
+    assert records["aris:object:O1"].mapping_reference.endswith("/EpcStartEvent")
+    assert records["aris:object:O2"].mapping_reference.endswith("/EpcAutomatedFunction")
+    assert records["aris:object:O3"].mapping_reference.endswith("/EpcXorOperator")
+    assert records["aris:connection:C1"].mapping_reference.endswith("/EpcConnection")
+    assert "aris:connection:M1:O2:O3:cxn" in records
     rel_refs = [r.relation_reference for r in transport.requests[0].relationships]
     assert any(ref.endswith("/hasObject") for ref in rel_refs)
     assert any(ref.endswith("/flowsTo") for ref in rel_refs)
@@ -164,3 +164,43 @@ async def test_ingest_empty_is_noop(ingest):
     assert await ingest_entities([], ingest=service) is None
     assert await ingest_models([], ingest=service) is None
     assert await ingest_model_graph({}, [], [], ingest=service) is None
+
+
+@pytest.mark.spec("CONN-ARIS-MCP-CONNECTOR-CONTENT-R003")
+async def test_ingest_types_nodes_by_typenum_and_symbol(ingest):
+    """TypeNum/SymbolNum decide the leaf class; attachments decide the function kind."""
+    from pathlib import Path
+
+    from aris_mcp.aml import read_aml
+
+    service, transport = ingest
+    fixture = Path(__file__).parent / "fixtures" / "invoice-approval.aml"
+    [bundle] = read_aml(fixture.read_bytes())
+    await ingest_model_graph(
+        bundle.model, bundle.objects, bundle.connections, ingest=service
+    )
+    by_name = {
+        r.payload.get("name"): r.mapping_reference.rsplit("/", 1)[-1]
+        for r in transport.requests[0].records
+    }
+    assert by_name["Invoice approval"] == "EpcModel"
+    assert by_name["Check invoice"] == "EpcHumanFunction"
+    assert by_name["Post invoice"] == "EpcAutomatedFunction"
+    assert by_name["Determine approval level"] == "EpcDecisionFunction"
+    assert by_name["Invoice received"] == "EpcStartEvent"
+    assert by_name["Invoice checked"] == "EpcIntermediateEvent"
+    assert by_name["Invoice processed"] == "EpcEndEvent"
+    assert by_name["Accounts payable"] == "EpcOrganizationalElement"
+    assert by_name["ERP system"] == "EpcApplicationSystem"
+    assert by_name["approval-level"] == "EpcBusinessRule"
+    assert by_name["Invoice"] == "EpcDocument"
+    kinds = {
+        r.mapping_reference.rsplit("/", 1)[-1] for r in transport.requests[0].records
+    }
+    assert {"EpcXorOperator", "EpcAndOperator", "EpcConnection"} <= kinds
+    connections = [
+        r
+        for r in transport.requests[0].records
+        if r.record_id.startswith("aris:connection:")
+    ]
+    assert len(connections) == len(bundle.connections)
