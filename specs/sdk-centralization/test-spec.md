@@ -9,3 +9,9 @@ Governing spec: [spec.md](spec.md).
 | T-003 | `CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.2` | Unit | `tests/test_auth.py::test_oauth_token_fetch_uses_resolved_tls_profile` | The token client is built with the resolved profile. |  |
 | T-004 | `CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.3` | Unit | `tests/test_sdk_transport.py::test_request_shapes_are_unchanged` | A request sends its JSON body and an error status raises as before. |  |
 | T-005 | `CONN-ARIS-MCP-SDK-CENTRALIZATION-R001.4` | Unit | `tests/test_sdk_transport.py::test_dependencies_come_from_the_sdk` | `pyproject.toml` has no `requests` pin and the SDK floor is `0.3.11` or later. |  |
+
+## Adoption of scion-sdk 0.10.0 (`CONN-ARIS-MCP-SDK-CENTRALIZATION-R002`)
+
+| Requirement | Test | Observation |
+|---|---|---|
+| `CONN-ARIS-MCP-SDK-CENTRALIZATION-R002` | `tests/test_scion_sdk_0_10_imports.py::test_every_scion_sdk_import_resolves_on_the_pinned_release` | Every `scion_sdk` import resolves on the pinned release; a removed path fails the test. |
