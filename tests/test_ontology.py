@@ -32,7 +32,7 @@ def test_every_class_reaches_a_core_class():
                 continue
             seen.add(cls)
             if cls not in CLASSES:
-                reached = True  # a core class (http://knuckles.team/kg#)
+                reached = True  # a core class (https://knuckles-team.github.io/ontology/core#)
                 continue
             parents = CLASSES[cls].parents
             assert parents, f"{cls} has no rdfs:subClassOf"
