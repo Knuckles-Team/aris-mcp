@@ -1,4 +1,4 @@
-"""Native epistemic-graph blob ingestion — Wire-First coverage for ARIS exports.
+"""Native medulla blob ingestion — Wire-First coverage for ARIS exports.
 
 Exercises ``ingest_model_export`` against a fake transport boundary (no engine
 required), asserting the content-addressed media record carries the right

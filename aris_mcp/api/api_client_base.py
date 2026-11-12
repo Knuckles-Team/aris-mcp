@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 import httpx
 from scion_sdk.auth.static import BearerAuth
-from scion_sdk.http.client import create_http_client
+from scion_sdk.http.client import build_http_client as sdk_build_http_client
 from scion_sdk.http.options import HttpClientOptions
 from scion_sdk.tls.profile import ResolvedTLSProfile
 from scion_sdk.tls.resolve import resolve_tls_profile
@@ -18,7 +18,7 @@ def build_http_client(
     timeout: float = 30.0,
 ) -> httpx.Client:
     """A governed SDK client for ``base_url`` with the runtime TLS profile."""
-    return create_http_client(
+    return sdk_build_http_client(
         HttpClientOptions(
             base_url=base_url,
             timeout=timeout,

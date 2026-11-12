@@ -14,8 +14,9 @@ import hashlib
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
-CONTRACT_NS = "https://knuckles-team.github.io/scion-sdk/contract#"
-CORE_NS = "http://knuckles.team/kg#"
+CONTRACT_NS = "https://knuckles-team.github.io/ontology/surface-contract#"
+CORE_NS = "https://knuckles-team.github.io/ontology/core#"
+CONNECTOR_NS = "https://knuckles-team.github.io/ontology/connector/aris#"
 
 
 @dataclass(frozen=True)
