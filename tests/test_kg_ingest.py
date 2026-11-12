@@ -1,4 +1,4 @@
-"""Native epistemic-graph typed-node ingestion — Wire-First coverage for ARIS.
+"""Native medulla typed-node ingestion — Wire-First coverage for ARIS.
 
 Exercises the real ``ingest_entities`` / ``ingest_models`` / ``ingest_model_graph``
 seam against a fake transport boundary (no engine required), letting the SDK's own

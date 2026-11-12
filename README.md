@@ -165,7 +165,7 @@ Every tool can be disabled via the toggle env var (set to `false`):
 
 > **Install the slim `[mcp]` extra.** Install `aris-mcp[mcp]` — the MCP-server extra
 > that pulls only the FastMCP / FastAPI tooling (`scion-sdk`). It deliberately
-> **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
+> **excludes** the heavy agent runtime (the medulla engine, `pydantic-ai`,
 > `dspy`, `llama-index`, `tree-sitter`), so `uvx`/container installs are dramatically
 > Pydantic AI agent.
 
@@ -198,13 +198,13 @@ docker build --target mcp   -t knucklessg1/aris-mcp:mcp    docker/   # slim MCP 
 
 agent (`:1.3.1`) with a co-located `:mcp` sidecar.
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
 transitively via `scion-sdk`). For production — or to share one knowledge graph
-across multiple agents — run **epistemic-graph as its own database container** and point the
+across multiple agents — run **medulla as its own database container** and point the
 agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
 config, and the full database architecture (with diagrams) are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 The slim `[mcp]` server does **not** require the database.
 
 ## Run
@@ -220,7 +220,7 @@ aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
 > FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
-> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> still carries `medulla[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
 #### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
