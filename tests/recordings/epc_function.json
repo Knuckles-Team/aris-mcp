@@ -1,0 +1,72 @@
+{
+  "repository": "fixture",
+  "model_id": "5e0c0a11-0000-4000-8000-000000000001",
+  "items": [
+    {
+      "guid": "a5df3b97-aadc-543c-a29e-4eb113f8159d",
+      "id": "ObjDef.inv.2",
+      "name": "Check invoice",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Check invoice"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    },
+    {
+      "guid": "3ef53c85-3b34-5fab-ab01-3d33830d4579",
+      "id": "ObjDef.inv.4",
+      "name": "Determine approval level",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Determine approval level"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    },
+    {
+      "guid": "7731ce37-772d-5118-90c6-44bb79b4a359",
+      "id": "ObjDef.inv.8",
+      "name": "Approve invoice",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Approve invoice"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    },
+    {
+      "guid": "2d65215d-1ad1-5139-a696-ae258f100aed",
+      "id": "ObjDef.inv.11",
+      "name": "Post invoice",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Post invoice"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    },
+    {
+      "guid": "a8e7379b-984a-5793-8d5f-57e609a997d8",
+      "id": "ObjDef.inv.14",
+      "name": "Notify supplier",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Notify supplier"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    },
+    {
+      "guid": "18625a1b-af0a-5805-bf40-98c981915e82",
+      "id": "ObjDef.inv.15",
+      "name": "Archive invoice",
+      "type": "OT_FUNC",
+      "symbol": "ST_FUNC",
+      "attributes": {
+        "AT_NAME": "Archive invoice"
+      },
+      "modelId": "5e0c0a11-0000-4000-8000-000000000001"
+    }
+  ]
+}

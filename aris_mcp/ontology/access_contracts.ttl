@@ -1,0 +1,40 @@
+@prefix ac: <https://knuckles-team.github.io/ontology/access#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
+@prefix aris: <https://knuckles-team.github.io/ontology/connector/aris#> .
+@prefix arisac: <https://knuckles-team.github.io/ontology/connector/aris-access#> .
+
+# Read contracts for the competency reads of the ARIS connector: the functions
+# placed on a model and the directed connections of a model. Each names the
+# existing read tool that serves it; no new tool is introduced.
+
+arisac:epcFunctionAccess a ac:AccessContract ;
+    ac:classIri core:EpcFunction ;
+    ac:sourceId "aris-mcp" ;
+    ac:entity "epc_function" ;
+    ac:keyField "id" ;
+    ac:accessKind "mcp_tool" ;
+    ac:operation "aris_list_model_objects" ;
+    ac:parameter "model_id" ;
+    ac:recordsPath "items" ;
+    ac:pagination "none" .
+
+arisac:epcFunctionModelId a ac:PropertyBinding ;
+    ac:contract arisac:epcFunctionAccess ; ac:property aris:modelId ; ac:field "modelId" .
+arisac:epcFunctionName a ac:PropertyBinding ;
+    ac:contract arisac:epcFunctionAccess ; ac:property core:name ; ac:field "name" .
+
+arisac:connectionAccess a ac:AccessContract ;
+    ac:classIri aris:EpcConnection ;
+    ac:sourceId "aris-mcp" ;
+    ac:entity "connection" ;
+    ac:keyField "id" ;
+    ac:accessKind "mcp_tool" ;
+    ac:operation "aris_list_model_connections" ;
+    ac:parameter "model_id" ;
+    ac:recordsPath "items" ;
+    ac:pagination "none" .
+
+arisac:connectionSourceId a ac:PropertyBinding ;
+    ac:contract arisac:connectionAccess ; ac:property aris:sourceId ; ac:field "sourceObjectId" .
+arisac:connectionTargetId a ac:PropertyBinding ;
+    ac:contract arisac:connectionAccess ; ac:property aris:targetId ; ac:field "targetObjectId" .
