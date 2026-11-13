@@ -305,3 +305,20 @@
     rdfs:comment "ARIS connection type (TypeNum, for example CT_ACTIV_1) of an EPC connection." ;
     rdfs:domain :EpcConnection ;
     rdfs:range xsd:string .
+
+:modelId a owl:DatatypeProperty ;
+    rdfs:label "model id" ;
+    rdfs:comment "GUID of the model an object is placed on." ;
+    rdfs:range xsd:string .
+
+:sourceId a owl:DatatypeProperty ;
+    rdfs:label "source id" ;
+    rdfs:comment "GUID of the object an EPC connection starts at." ;
+    rdfs:domain :EpcConnection ;
+    rdfs:range xsd:string .
+
+:targetId a owl:DatatypeProperty ;
+    rdfs:label "target id" ;
+    rdfs:comment "GUID of the object an EPC connection points to." ;
+    rdfs:domain :EpcConnection ;
+    rdfs:range xsd:string .

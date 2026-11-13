@@ -220,7 +220,10 @@ def register_aris_tools(mcp: FastMCP) -> None:
         """List the objects placed on a model: functions, events, rule operators
         and attached objects, each with its ARIS type (TypeNum) and symbol."""
         mode, repo = get_source()
-        items = _records(_call(repo.list_model_objects, model_id))
+        items = [
+            {**item, "modelId": model_id}
+            for item in _records(_call(repo.list_model_objects, model_id))
+        ]
         return {"repository": mode, "model_id": model_id, "items": items}
 
     @mcp.tool(tags={"model"}, annotations=READ)
