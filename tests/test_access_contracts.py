@@ -43,7 +43,7 @@ def test_competency_contracts_certified(monkeypatch):
         assert contract.operation in tools
         assert contract.pagination == "none"
         assert contract.key_field == "id"
-        for prop, field in contract.predicates:
+        for prop, _field in contract.predicates:
             if prop.startswith(CONNECTOR_NS):
                 local = prop.removeprefix(CONNECTOR_NS)
                 assert f"\n:{local} a owl:" in ONTOLOGY, local
@@ -57,12 +57,10 @@ def test_competency_contracts_certified(monkeypatch):
             assert contract.key_field in record
             assert all(field in record for _, field in contract.predicates)
 
-        async def served():
+        async def served(contract=contract):
             _, mcp = build_server("aris_mcp", command_args=[])
             async with Client(mcp) as client:
-                result = await client.call_tool(
-                    contract.operation, {"model_id": MODEL}
-                )
+                result = await client.call_tool(contract.operation, {"model_id": MODEL})
                 return result.structured_content
 
         live = asyncio.run(served())
