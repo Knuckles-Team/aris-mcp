@@ -64,7 +64,7 @@ _LEAVES = {
     "EpcBusinessRule": "EpcAttachment",
     "EpcDataObject": "EpcAttachment",
     "EpcDocument": "EpcAttachment",
-    "EpcAttachment": "Concept",
+    "EpcAttachment": "DomainEntity",
     "EpcConnection": "Concept",
     "EpcModel": "ProcessModel",
     "ModelExport": "MediaAsset",
