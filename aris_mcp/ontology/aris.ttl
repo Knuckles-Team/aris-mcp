@@ -193,7 +193,7 @@
 # ---------------------------------------------------------------------------
 
 :EpcAttachment a owl:Class ;
-    rdfs:subClassOf core:Concept ;
+    rdfs:subClassOf core:DomainEntity ;
     rdfs:label "EPC attached object" ;
     rdfs:comment "An object connected to a function that is not part of the control flow. An attachment of a type no subclass covers is kept in the canonical annex as epc-attachment." .
 

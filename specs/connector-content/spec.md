@@ -53,6 +53,7 @@ An agent that reads or converts ARIS EPC models finds the EPC classes, their can
 - **FR-006**: Tool-use contracts, links, data locations and roles. Rows: `CONN-ARIS-MCP-CONNECTOR-CONTENT-R006`.
 - **FR-001**: Default content. Rows: `CONN-ARIS-MCP-CONNECTOR-CONTENT-R001`.
 - **FR-002**: Declare access contracts for the competency reads of aris-mcp. Rows: `CONN-ARIS-MCP-CONNECTOR-CONTENT-R002`.
+- **FR-007**: The packaged ontology roots every class in the core ontology (`CONN-ARIS-MCP-CONNECTOR-CONTENT-R007`).
 
 ## Success Criteria
 
@@ -79,3 +80,4 @@ An agent that reads or converts ARIS EPC models finds the EPC classes, their can
 | FR-004 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R004` | [plan.md](plan.md) | T-004 | [test-spec.md](test-spec.md) |
 | FR-005 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R005` | [plan.md](plan.md) | T-005 | [test-spec.md](test-spec.md) |
 | FR-006 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R006` | [plan.md](plan.md) | T-006 | [test-spec.md](test-spec.md) |
+| FR-007 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R007` | plan.md Production caller chain | T-007 | tests/test_ontology_extends_core.py::test_attachment_roots_under_the_core_domain_entity |

@@ -10,3 +10,4 @@ Each task line reads `- [ ] T001 [P] [US1] <ID>-R012.4 description`. Order is pr
 - [x] T004 [US2] CONN-ARIS-MCP-CONNECTOR-CONTENT-R004 Skills name only served tools and write up the proven workflows.
 - [x] T005 [US2] CONN-ARIS-MCP-CONNECTOR-CONTENT-R005 Prompts are complete agent definitions.
 - [x] T006 [US2] CONN-ARIS-MCP-CONNECTOR-CONTENT-R006 Tool-use contracts, links, data locations and roles.
+- [x] T007 [US1] CONN-ARIS-MCP-CONNECTOR-CONTENT-R007 The pack extends only the core ontology.

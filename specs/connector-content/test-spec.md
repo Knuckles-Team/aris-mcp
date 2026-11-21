@@ -9,6 +9,7 @@ Governing spec: [spec.md](spec.md).
 | T-004 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R004` | `tests/test_surface_contracts.py::test_skills_name_only_served_tools_and_link_to_tasks` | Skills name only served tools and write up the proven workflows. |
 | T-005 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R005` | `tests/test_surface_contracts.py::test_prompts_are_complete_agent_definitions` | Prompts are complete agent definitions. |
 | T-006 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R006` | `tests/test_surface_contracts.py::test_every_tool_is_called_by_a_contract_and_named_by_a_link` | Tool-use contracts, links, data locations and roles. |
+| T-007 | `CONN-ARIS-MCP-CONNECTOR-CONTENT-R007` | `tests/test_ontology_extends_core.py::test_attachment_roots_under_the_core_domain_entity` | The packaged Turtle roots the attached-object class under the core domain entity. |
 
 ## Rows awaiting bound tests
 - `CONN-ARIS-MCP-CONNECTOR-CONTENT-R002`: proof `tests/test_access_contracts.py::test_competency_contracts_certified`; the test carries the row's `spec` marker when it lands.
