@@ -2,13 +2,7 @@
 name: aris-epc-to-canonical-workflow
 skill_type: skill
 description: >-
-  Convert an ARIS EPC export into the canonical workflow
-  (medulla.process.canonical/v1) that the engine builds the agent workflow
-  graph from, and convert a canonical workflow (from BPMN or EPC) back to EPC
-  and AML with its losses listed. Use when a business process authored in ARIS
-  must run as an agent workflow, or a process from the process engine must be
-  handed to ARIS. Do NOT use to read repository models (use
-  aris-process-modeling) or ingest them (use aris-kg-ingestion).
+  Convert an ARIS EPC export into the canonical workflow (medulla.process.canonical/v1) that the engine builds the agent workflow graph from, and convert a canonical workflow (from BPMN or EPC) back to EPC and AML with its losses listed. Use when a business process authored in ARIS must run as an agent workflow, or a process from the process engine must be handed to ARIS.
 license: MIT
 tags: [aris, epc, bpmn, canonical-workflow, agent-dag, aml, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '1.0.0'
 ---
 # EPC to canonical workflow and agent workflow graph input
+
+Scope: Convert an ARIS EPC export into the canonical workflow (medulla.process.canonical/v1) that the engine builds the agent workflow graph from, and convert a canonical workflow (from BPMN or EPC) back to EPC and AML with its losses listed. Use when a business process authored in ARIS must run as an agent workflow, or a process from the process engine must be handed to ARIS. Do NOT use to read repository models (use aris-process-modeling) or ingest them (use aris-kg-ingestion).
 
 Contracts: `convert-epc-to-canonical-workflow`, `convert-canonical-to-epc`
 (`ontology://aris-mcp/contracts.ttl`). Data location: `canonical-workflow`.

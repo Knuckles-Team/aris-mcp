@@ -2,15 +2,7 @@
 name: aris-process-modeling
 skill_type: skill
 description: >-
-  Read ARIS EPC process models over the aris-mcp MCP server: check which
-  repository the connector serves (live tenant, AML directory, bundled fixture
-  or unconfigured), list the model inventory, fetch one model, its attributes,
-  its objects (functions, events, rule operators, attached objects) and its
-  connections, and export a model as AML. Use when the agent must inventory ARIS
-  models or inspect one model's EPC structure. Do NOT use for knowledge-graph
-  ingest (use aris-kg-ingestion), control-flow analysis (use
-  aris-process-mining) or conversion to the canonical workflow (use
-  aris-epc-to-canonical-workflow).
+  Read ARIS EPC process models over the aris-mcp MCP server: check which repository the connector serves (live tenant, AML directory, bundled fixture or unconfigured), list the model inventory, fetch one model, its attributes, its objects (functions, events, rule operators, attached objects) and its connections, and export a model as AML.
 license: MIT
 tags: [aris, bpm, epc, process-model, aml, mcp]
 metadata:
@@ -18,6 +10,8 @@ metadata:
   version: '2.0.0'
 ---
 # ARIS process modeling
+
+Scope: Read ARIS EPC process models over the aris-mcp MCP server: check which repository the connector serves (live tenant, AML directory, bundled fixture or unconfigured), list the model inventory, fetch one model, its attributes, its objects (functions, events, rule operators, attached objects) and its connections, and export a model as AML. Use when the agent must inventory ARIS models or inspect one model's EPC structure. Do NOT use for knowledge-graph ingest (use aris-kg-ingestion), control-flow analysis (use aris-process-mining) or conversion to the canonical workflow (use aris-epc-to-canonical-workflow).
 
 Contracts: `verify-process-source`, `read-process-model`, `export-model-aml`,
 `enrich-model-attributes` (`ontology://aris-mcp/contracts.ttl`). Data locations:

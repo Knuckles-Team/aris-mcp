@@ -2,9 +2,7 @@
 name: aris-mcp-development
 skill_type: skill
 description: >-
-  Develop and maintain the Software AG ARIS connector while preserving its
-  Connector boundary, REST client contract, authentication policy, KG source
-  declarations, package contents, and release evidence.
+  Develop and maintain the Software AG ARIS connector while preserving its Connector boundary, REST client contract, authentication policy, KG source declarations, package contents, and release evidence.
 license: MIT
 tags: [aris, connector, mcp, sdk, development]
 metadata:
