@@ -2,15 +2,7 @@
 name: aris-kg-ingestion
 skill_type: skill
 description: >-
-  Ingest ARIS process models into the knowledge graph over the aris-mcp MCP
-  server: the model inventory as model nodes, one model's objects typed by
-  their leaf EPC class (:EpcHumanFunction, :EpcAutomatedFunction,
-  :EpcDecisionFunction, :EpcProcessInterface, :EpcStartEvent, :EpcEndEvent,
-  :EpcIntermediateEvent, :EpcAndOperator/:EpcOrOperator/:EpcXorOperator,
-  attachments) with reified :EpcConnection nodes and :flowsTo edges, and raw
-  exports as content-addressed :ModelExport blobs. Use when the agent must
-  mirror ARIS content into the graph. Do NOT use to merely read models (use
-  aris-process-modeling).
+  Ingest ARIS process models into the knowledge graph over the aris-mcp MCP server: the model inventory as model nodes, one model's objects typed by their leaf EPC class (:EpcHumanFunction, :EpcAutomatedFunction, :EpcDecisionFunction, :EpcProcessInterface, :EpcStartEvent, :EpcEndEvent, :EpcIntermediateEvent, :EpcAndOperator/:EpcOrOperator/:EpcXorOperator, attachments) with reified :EpcConnection...
 license: MIT
 tags: [aris, knowledge-graph, ingestion, epc, blob, mcp]
 metadata:
@@ -18,6 +10,8 @@ metadata:
   version: '2.0.0'
 ---
 # ARIS knowledge-graph ingestion
+
+Scope: Ingest ARIS process models into the knowledge graph over the aris-mcp MCP server: the model inventory as model nodes, one model's objects typed by their leaf EPC class (:EpcHumanFunction, :EpcAutomatedFunction, :EpcDecisionFunction, :EpcProcessInterface, :EpcStartEvent, :EpcEndEvent, :EpcIntermediateEvent, :EpcAndOperator/:EpcOrOperator/:EpcXorOperator, attachments) with reified :EpcConnection nodes and :flowsTo edges, and raw exports as content-addressed :ModelExport blobs. Use when the agent must mirror ARIS content into the graph. Do NOT use to merely read models (use aris-process-modeling).
 
 Contract: `ingest-process-models` (`ontology://aris-mcp/contracts.ttl`).
 CONCEPT:AU-KG.ingest.enterprise-source-extractor

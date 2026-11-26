@@ -2,13 +2,7 @@
 name: aris-process-mining
 skill_type: skill
 description: >-
-  Analyse the control flow of ARIS EPC models over the aris-mcp MCP server:
-  trace event -> function -> event paths, find splits and joins at rule
-  operators, spot disconnected or dead-end objects and non-alternating chains,
-  and compare paths. Use when the agent must explain how a process flows or
-  validate an EPC's structure. Do NOT use to merely read models (use
-  aris-process-modeling), to ingest them (use aris-kg-ingestion) or to convert
-  them (use aris-epc-to-canonical-workflow).
+  Analyse the control flow of ARIS EPC models over the aris-mcp MCP server: trace event -> function -> event paths, find splits and joins at rule operators, spot disconnected or dead-end objects and non-alternating chains, and compare paths. Use when the agent must explain how a process flows or validate an EPC's structure.
 license: MIT
 tags: [aris, process-mining, epc, control-flow, analysis, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '2.0.0'
 ---
 # ARIS process mining
+
+Scope: Analyse the control flow of ARIS EPC models over the aris-mcp MCP server: trace event -> function -> event paths, find splits and joins at rule operators, spot disconnected or dead-end objects and non-alternating chains, and compare paths. Use when the agent must explain how a process flows or validate an EPC's structure. Do NOT use to merely read models (use aris-process-modeling), to ingest them (use aris-kg-ingestion) or to convert them (use aris-epc-to-canonical-workflow).
 
 Contract: `read-process-model` (`ontology://aris-mcp/contracts.ttl`).
 
