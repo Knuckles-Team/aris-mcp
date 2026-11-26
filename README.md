@@ -1,4 +1,32 @@
-# aris-mcp
+# Aris Mcp
+## MCP
+
+![PyPI - Version](https://img.shields.io/pypi/v/aris-mcp)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
+![PyPI - Downloads](https://img.shields.io/pypi/dd/aris-mcp)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/aris-mcp)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/aris-mcp)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/aris-mcp)
+![PyPI - License](https://img.shields.io/pypi/l/aris-mcp)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/aris-mcp)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/aris-mcp)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/aris-mcp)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/aris-mcp)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/aris-mcp)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/aris-mcp)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/aris-mcp)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/aris-mcp)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/aris-mcp)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/aris-mcp)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/aris-mcp)
+
+> **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
+> [official documentation](https://knuckles-team.github.io/aris-mcp/).
+
+---
+
+## Overview
 
 Software AG **ARIS** REST API + MCP Server for Agentic AI.
 
@@ -15,7 +43,11 @@ scion-sdk Knowledge Graph's Camunda + ARIS ↔ KG integration:
   uses `set_model_attributes` to write a `kg_intelligence` attribute back onto
   ARIS models (gated by `ARIS_ENABLE_WRITE`).
 
-## Available MCP Tools
+---
+
+## MCP
+
+### Available MCP Tools
 
 The table below is auto-generated from the live server — do not edit by hand.
 
@@ -50,6 +82,118 @@ _15 intent tool(s) · 0 operation(s). Auto-generated — do not edit._
 > repository tools refuse `ARIS_NOT_CONFIGURED`. EPC models convert to and from the
 > canonical workflow (`medulla.process.canonical/v1`) the agent workflow graph is
 > built from.
+
+### MCP Configuration Examples
+
+<!-- MCP-CONFIG-EXAMPLES:START -->
+
+> **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
+> FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
+> still carries `medulla[full]`. The `[agent-runtime]` extra additionally
+> enables model orchestration.
+
+#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "aris-mcp[mcp]",
+        "aris-mcp"
+      ],
+      "env": {
+        "ARISTOOL": "True",
+        "ARIS_API_BASE": "https://aris.example.com/abs/api",
+        "ARIS_ENABLE_WRITE": "False"
+      }
+    }
+  }
+}
+```
+
+Runtime references require an alias-aware launcher such as Arbora. Other
+launchers must omit those entries and inject the resolved values through their
+own runtime secret boundary.
+
+#### Streamable-HTTP Transport (networked / production)
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "aris-mcp[mcp]",
+        "aris-mcp",
+        "--transport",
+        "streamable-http",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "TRANSPORT": "streamable-http",
+        "HOST": "127.0.0.1",
+        "PORT": "8000",
+        "ARISTOOL": "True",
+        "ARIS_API_BASE": "https://aris.example.com/abs/api",
+        "ARIS_ENABLE_WRITE": "False"
+      }
+    }
+  }
+}
+```
+
+Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+
+```json
+{
+  "mcpServers": {
+    "aris-mcp": {
+      "url": "http://localhost:8000/aris-mcp/mcp"
+    }
+  }
+}
+```
+
+Run a reviewed container image as a least-privilege stdio child (no
+listener or published port):
+
+```bash
+docker run -i --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --pids-limit=256 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
+  -e TRANSPORT=stdio \
+  -e ARISTOOL=True \
+  -e ARIS_API_BASE=https://aris.example.com/abs/api \
+  -e ARIS_ENABLE_WRITE=False \
+  registry.example.invalid/aris-mcp@sha256:<digest> aris-mcp
+```
+
+For containerized network HTTP, supply an authenticated TLS ingress (or
+direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
+CIDR policy through the operator-owned deployment profile. The generator
+does not emit an unauthenticated non-loopback listener.
+
+_Auto-generated from the code-read env surface (package vars) — do not edit._
+<!-- MCP-CONFIG-EXAMPLES:END -->
+
+---
+
+## Deployment
+
+1. **stdio** — `uv run aris-mcp` (see `mcp_config.json`).
+2. **streamable-http** — `aris-mcp --transport streamable-http --port 8000`.
+3. **local container** — build from `docker/` and run with the env above.
+4. **remote** — point the operator's client at `https://aris-mcp.example.invalid/mcp`.
+
+---
 
 ## Environment Variables
 
@@ -161,6 +305,8 @@ Every tool can be disabled via the toggle env var (set to `false`):
 | `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
 | `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
 
+---
+
 ## Installation
 
 > **Install the slim `[mcp]` extra.** Install `aris-mcp[mcp]` — the MCP-server extra
@@ -207,6 +353,8 @@ config, and the full database architecture (with diagrams) are documented in the
 [medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 The slim `[mcp]` server does **not** require the database.
 
+---
+
 ## Run
 
 ```bash
@@ -214,114 +362,32 @@ aris-mcp                       # stdio (default)
 aris-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
-## MCP Configuration Examples
+---
 
-<!-- MCP-CONFIG-EXAMPLES:START -->
+## Documentation
 
-> **Install the connector-focused `[mcp]` extra.** Examples use `aris-mcp[mcp]` to add
-> FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
-> still carries `medulla[full]`. The `[agent-runtime]` extra additionally
-> enables model orchestration.
+The complete documentation is published as the
+[official documentation site](https://knuckles-team.github.io/aris-mcp/) and is
+the recommended reference for installation, deployment, and day-to-day operation.
 
-#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
+---
 
-```json
-{
-  "mcpServers": {
-    "aris-mcp": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "aris-mcp[mcp]",
-        "aris-mcp"
-      ],
-      "env": {
-        "ARISTOOL": "True",
-        "ARIS_API_BASE": "https://aris.example.com/abs/api",
-        "ARIS_ENABLE_WRITE": "False"
-      }
-    }
-  }
-}
-```
+## Repository Owners
 
-Runtime references require an alias-aware launcher such as Arbora. Other
-launchers must omit those entries and inject the resolved values through their
-own runtime secret boundary.
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=example&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
 
-#### Streamable-HTTP Transport (networked / production)
+![GitHub followers](https://img.shields.io/github/followers/example)
+![GitHub User's stars](https://img.shields.io/github/stars/example)
 
-```json
-{
-  "mcpServers": {
-    "aris-mcp": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "aris-mcp[mcp]",
-        "aris-mcp",
-        "--transport",
-        "streamable-http",
-        "--port",
-        "8000"
-      ],
-      "env": {
-        "TRANSPORT": "streamable-http",
-        "HOST": "127.0.0.1",
-        "PORT": "8000",
-        "ARISTOOL": "True",
-        "ARIS_API_BASE": "https://aris.example.com/abs/api",
-        "ARIS_ENABLE_WRITE": "False"
-      }
-    }
-  }
-}
-```
+---
 
-Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+## Contribute
 
-```json
-{
-  "mcpServers": {
-    "aris-mcp": {
-      "url": "http://localhost:8000/aris-mcp/mcp"
-    }
-  }
-}
-```
-
-Run a reviewed container image as a least-privilege stdio child (no
-listener or published port):
-
-```bash
-docker run -i --rm \
-  --read-only \
-  --cap-drop=ALL \
-  --security-opt=no-new-privileges \
-  --pids-limit=256 \
-  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
-  -e TRANSPORT=stdio \
-  -e ARISTOOL=True \
-  -e ARIS_API_BASE=https://aris.example.com/abs/api \
-  -e ARIS_ENABLE_WRITE=False \
-  registry.example.invalid/aris-mcp@sha256:<digest> aris-mcp
-```
-
-For containerized network HTTP, supply an authenticated TLS ingress (or
-direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
-CIDR policy through the operator-owned deployment profile. The generator
-does not emit an unauthenticated non-loopback listener.
-
-_Auto-generated from the code-read env surface (package vars) — do not edit._
-<!-- MCP-CONFIG-EXAMPLES:END -->
-
-## Deployment
-
-1. **stdio** — `uv run aris-mcp` (see `mcp_config.json`).
-2. **streamable-http** — `aris-mcp --transport streamable-http --port 8000`.
-3. **local container** — build from `docker/` and run with the env above.
-4. **remote** — point the operator's client at `https://aris-mcp.example.invalid/mcp`.
-
+Contributions are welcome! Please ensure code quality by running local checks before submitting pull requests:
+- Format code using `ruff format .`
+- Lint code using `ruff check .`
+- Validate type-safety with `mypy .`
+- Run test suites using `pytest`
 
 <!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->
 
